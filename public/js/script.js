@@ -1,33 +1,18 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const response = await fetch('/api/products');
-    const data = await response.json();
-    currentProductList = data; 
-    renderProducts(); 
-  } catch (error) {
-    console.error("Lỗi khi tải sản phẩm:", error);
-  }
-});
-
-function displayProducts(products) {
-  const productContainer = document.getElementById('product-list');
-  productContainer.innerHTML = '';
-
-  products.forEach(product => {
-    const productHTML = `
-      <div class="product-item">
-        <img src="${product.image}" alt="${product.name}">
-        <h3>${product.name}</h3>
-        <p>${product.price.toLocaleString()} đ</p>
-      </div>
-    `;
-    productContainer.innerHTML += productHTML;
-  });
-}
 let products = [];
 let currentProductList = [];
 let currentPage = 1;
 const productsPerPage = 15;
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const response = await fetch('/api/products');
+    const data = await response.json();
+    currentProductList = data;
+    renderProducts();
+  } catch (error) {
+    console.error("Lỗi khi tải sản phẩm:", error);
+  }
+});
 
 function renderProducts(page = 1) {
   const container = document.getElementById("product-list");
@@ -37,6 +22,7 @@ function renderProducts(page = 1) {
   const end = start + productsPerPage;
   const pageProducts = currentProductList.slice(start, end);
   container.innerHTML = "";
+
   const newPage = document.createElement("div");
   newPage.className = `product-page slide-in-${direction}`;
 
@@ -44,8 +30,8 @@ function renderProducts(page = 1) {
     const card = document.createElement("div");
     card.className = "product-card";
     card.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-image" />
-      <h3>${product.name}</h3>
+      <img src="${product.image}" alt="${product.name}" class="product-image" onclick="location.href='chitietsanpham.html?id=${product.id}'" />
+      <h3 onclick="location.href='chitietsanpham.html?id=${product.id}'" style="cursor: pointer;">${product.name}</h3>
       <p>Giá: ${product.price.toLocaleString()}đ</p>
       <button onclick="showQuantityModal(${start + index})">Thêm vào giỏ</button>
     `;
@@ -63,8 +49,8 @@ function renderProducts(page = 1) {
 
   setTimeout(() => {
     if (oldPage && container.contains(oldPage)) {
-  container.removeChild(oldPage);
-}
+      container.removeChild(oldPage);
+    }
     newPage.classList.remove(`slide-in-${direction}`, "slide-in");
   }, 500);
 
@@ -72,13 +58,10 @@ function renderProducts(page = 1) {
   renderPagination();
 }
 
-
 function renderPagination() {
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
-
   const totalPages = Math.ceil(currentProductList.length / productsPerPage);
-
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
@@ -87,6 +70,7 @@ function renderPagination() {
     pagination.appendChild(btn);
   }
 }
+
 
 function showQuantityModal(index) {
   selectedProductIndex = index;
@@ -384,7 +368,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const selectedCategory = urlParams.get('category');
 
     if (selectedCategory) {
-      filterCategory(selectedCategory); // Lúc này filterCategory đã được định nghĩa ở trên
+      filterCategory(selectedCategory);
     } else {
       currentProductList = products;
       renderProducts(1);
@@ -394,6 +378,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Lỗi khi tải sản phẩm:", error);
   }
 });
+
 
 
 

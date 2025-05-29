@@ -33,8 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// Hàm xử lý sau khi click vào menu
 function handleCategoryClick(category) {
-  // Chuyển về index.html và truyền category qua URL
   window.location.href = `index.html?category=${category}`;
 }

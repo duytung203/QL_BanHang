@@ -1,27 +1,16 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Chi tiết sản phẩm</title>
+  <link rel="stylesheet" href="CSS/chitietsanpham.css">
 </head>
 <body>
-  <div class="product-detail" id="productDetail"></div>
+  <h1>Chi tiết sản phẩm</h1>
+  <div id="product-detail">Đang tải...</div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-
-    fetch(`/api/products/${id}`)
-      .then(res => res.json())
-      .then(product => {
-        document.getElementById('productDetail').innerHTML = `
-          <h1>${product.name}</h1>
-          <img src="${product.image}" width="200" />
-          <p>Giá: ${product.price.toLocaleString()}đ</p>
-          <p>${product.description}</p>
-          <a href="index.html">← Quay lại</a>
-        `;
-      });
-  </script>
+  <script src="js/chitiet.js"></script>
 </body>
 </html>
+
+
