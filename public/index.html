@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh Trà Coffee</title>
+  <link rel="stylesheet" href="CSS/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+   <header class="main-header" role="banner">
+  <div class="header-content">
+    <div class="logo" aria-label="Thanh Tra Tea">THANH TRA TEA</div>
+    <div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="#" id="menu-coffee">Coffee</a></li>
+          <li><a href="#" id="menu-tea">Trà</a></li>
+          <li class="menuchinh" aria-haspopup="true" aria-expanded="false">
+            <a>Menu</a>
+            <ul class="menuphu" role="menu">
+              <li><a href="#" id="menu-banh" >Bánh ngọt</a></li>
+              <li><a href="#" id="menu-anvat" >Đồ ăn vặt</a></li>
+            </ul>
+          </li>
+          <li><a href="tintuc.html">Tin tức</a></li>
+          <li><a href="tuyendung.html">Tuyển dụng</a></li>
+        </ul>
+      </nav>
+      <div id="userMenu"> 
+        <button class="login-btn" onclick="toggleModal(true)" aria-label="Đăng nhập">Đăng nhập</button>
+        <button class="cart-btn" onclick="toggleCart()" aria-label="Giỏ hàng">
+          Giỏ hàng (<span id="cart-count" aria-live="polite">0</span>)
+        </button>
+      </div>     
+    </div>
+  </div>
+</header>
+
+<div class="banner-container">
+  <div class="banner-slide">
+    <img src="images/anh_banner1.jpg" alt="Khuyến mãi 1 - Freeship dù chỉ 1 ly">
+    <div class="banner-text">
+      <h3>FREESHIP DÙ CHỈ 1 LY</h3>
+      <p>Thứ 7 - Chủ Nhật 01.05 - 31.05</p>
+      <small>Áp dụng cho đơn Giao hàng khi có 1 sản phẩm nước</small>
+    </div>
+  </div>
+  
+  <div class="banner-slide">
+    <img src="images/anh_banner2.png" alt="Khuyến mãi 2 - FREESHIP 2025">
+    <div class="banner-text">
+      <h3>FREESHIP 2025</h3>
+      <p>Ưu đãi đặc biệt từ THANH TRA TEA</p>
+    </div>
+  </div>
+  
+  <div class="banner-slide">
+    <img src="images/anh_banner3.png" alt="Khuyến mãi 3 - Chương trình khuyến mãi">
+    <div class="banner-text">
+      <h3>CHƯƠNG TRÌNH KHUYẾN MÃI</h3>
+      <p>Nhiều ưu đãi hấp dẫn đang chờ bạn</p>
+    </div>
+  </div>
+  <div class="banner-dots">
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</div>
+<main><div class="container">
+    <h1>Danh sách sản phẩm</h1>
+     <input type="text" id="searchInput" class="search-box" placeholder="Tìm kiếm sản phẩm..." onkeyup="filterProducts()">
+     <div id="noProductsMessage" style="display: none; color: red;">Không có sản phẩm phù hợp với từ khóa tìm kiếm.</div>
+    <div id="product-list" class="product-list">
+      <!-- san pham duoc them bang js -->
+    </div>
+    <div id="product-loc"></div>
+     <div id="pagination" class="pagination"></div>
+  </div></main>
+  <div id="cartModal" class="modal">
+    <div class="modal-content">
+      <h2>Giỏ hàng</h2>
+      <ul id="cart-items"></ul>
+      <button onclick="toggleCart()">Đóng</button>
+    </div>
+  </div>
+  
+ <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <div class="tabs">
+        <button class="active" onclick="switchTab('login')">Đăng nhập</button>
+        <button onclick="switchTab('register')">Đăng ký</button>
+      </div>
+      <div id="loginForm">
+      <h2>Đăng nhập</h2>
+      <input type="text" id="loginUsername" placeholder="Nhập email của bạn">
+      <input type="password" id="loginPassword" placeholder="Mật khẩu">
+      <button onclick="login()">Đăng nhập</button>
+    </div>
+    <div id="registerForm" style="display: none;">
+      <h2>Đăng ký</h2>
+      <input type="text" id="registerUsername" placeholder="Thông tin người dùng">
+      <input type="email" id="registerEmail" placeholder="Email">
+      <input type="password" id="registerPassword" placeholder="Mật khẩu">
+      <button onclick="register()">Đăng ký</button>
+    </div>
+    </div>
+  </div>
+  <!-- modal nhap so luong -->
+<div id="quantityModal" class="modal">
+  <div class="modal-content">
+    <h3>Nhập số lượng</h3>
+    <input type="number" id="quantityInput" min="1" value="1" />
+    <div style="margin-top: 10px;">
+      <button onclick="confirmAddToCart()">Xác nhận</button>
+      <hr>
+      <button onclick="closeQuantityModal()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-col">
+      <h3>Về chúng tôi</h3>
+      <p>Thanh Tra Tea - Thương hiệu trà và cà phê chất lượng cao từ 2025</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>Liên hệ</h3>
+      <div class="contact-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <a href="#">123 Đường ABC, TP.HÀ NỘi</a>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-phone"></i>
+        <a href="tel:0123456789">0123 456 789</a>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <a href="mailto:duytung2506@gmail.com">duytung2506@gmail.com</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>Giờ mở cửa</h3>
+      <p>Thứ 2 - Thứ 6: 7:00 - 21:00</p>
+      <p>Thứ 7 - CN: 8:00 - 22:00</p>
+    </div>
+
+    <div class="footer-col">
+      <h3>Đăng ký nhận tin</h3>
+      <div class="newsletter">
+        <input type="email" placeholder="Email của bạn">
+        <button>Đăng ký</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 Thanh Tra Tea. All Rights Reserved.</p>
+  </div>
+</footer>
+<!-- thong bao them gio hang thanh cong -->
+<div id="toast" class="toast">Đã thêm vào giỏ hàng!</div>
+  <div id="modal-container"></div>
+  <script src="js/main.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

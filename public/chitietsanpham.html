@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết sản phẩm</title>
+</head>
+<body>
+  <div class="product-detail" id="productDetail"></div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    fetch(`/api/products/${id}`)
+      .then(res => res.json())
+      .then(product => {
+        document.getElementById('productDetail').innerHTML = `
+          <h1>${product.name}</h1>
+          <img src="${product.image}" width="200" />
+          <p>Giá: ${product.price.toLocaleString()}đ</p>
+          <p>${product.description}</p>
+          <a href="index.html">← Quay lại</a>
+        `;
+      });
+  </script>
+</body>
+</html>

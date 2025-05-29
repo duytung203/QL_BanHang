@@ -1,0 +1,407 @@
+
+   * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+    .main-header {
+   background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 15px 0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2a5a3b;
+  font-family: 'Pacifico', cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+   margin-right: auto;
+}
+
+.main-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.main-nav ul {
+  display: flex;
+  list-style: none;
+}
+
+.main-nav li {
+  position: relative;
+  margin: 0 15px;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 16px;
+  transition: color 0.3s;
+  padding: 8px 0;
+  position: relative;
+}
+
+.main-nav a:hover {
+  color: #2a5a3b;
+}
+
+.main-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #2a5a3b;
+  transition: width 0.3s;
+}
+
+.main-nav a:hover::after {
+  width: 100%;
+}
+.menuphu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  width: 200px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  z-index: 100;
+  border-radius: 5px;
+  padding: 10px 0;
+}
+
+.menuchinh:hover .menuphu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menuphu li {
+  margin: 0;
+  padding: 0;
+}
+
+.menuphu a {
+  display: block;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.menuphu a:hover {
+  background-color: #f5f5f5;
+}
+
+
+
+h2 {
+  text-align: center;
+  color: #2a5a3b;
+  font-size: 24px;
+  margin-bottom: 30px; 
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.field {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.field:hover {
+  background-color: #f0f7f0;
+}
+
+.field label {
+  font-weight: 600;
+  color: #333;
+  width: 150px; 
+  text-align: right;
+  margin-right: 20px;
+}
+
+
+.field span[id$="-display"] {
+  flex: 1;
+  padding: 8px 0;
+  color: #555;
+  text-align: left;
+}
+
+.field input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  display: none; 
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #2a5a3b;
+  box-shadow: 0 0 0 2px rgba(42, 90, 59, 0.2);
+}
+
+
+.field .actions {
+  margin-left: 20px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+
+
+.field button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.field button:not([id^="save-"]):not([id^="cancel-"]) {
+  background-color: #2a5a3b;
+  color: white;
+}
+
+.field button:not([id^="save-"]):not([id^="cancel-"]):hover {
+  background-color: #1d472b;
+}
+
+
+.field button[id^="save-"] {
+  background-color: #28a745;
+  color: white;
+  display: none; 
+}
+
+.field button[id^="save-"]:hover {
+  background-color: #218838;
+}
+
+
+.field button[id^="cancel-"] {
+  background-color: #dc3545;
+  color: white;
+  display: none; 
+}
+
+.field button[id^="cancel-"]:hover {
+  background-color: #c82333;
+}
+.account-info-container {
+  max-width: 800px; 
+  margin: 0 auto; 
+  padding: 20px;
+}
+.field button[id^="change-"]{
+  margin: auto;
+}
+
+.footer {
+  background-color: #2a5a3b;
+  color: #fff;
+  padding: 50px 0 20px;
+  margin-top: 460px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  transition: transform 0.3s;
+}
+
+.contact-item:hover {
+  transform: translateX(5px);
+}
+
+.contact-item i {
+  font-size: 20px;
+  margin-right: 15px;
+  color: #c8e6c9;
+}
+
+.contact-item a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.contact-item a:hover {
+  color: #c8e6c9;
+}
+
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+}
+
+
+.social-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-links a {
+  color: #fff;
+  font-size: 20px;
+  transition: transform 0.3s;
+}
+
+.social-links a:hover {
+  transform: translateY(-3px);
+  color: #c8e6c9;
+}
+
+.newsletter {
+  margin-top: 20px;
+}
+
+.newsletter h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.newsletter input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.newsletter button {
+  background-color: #fff;
+  color: #2a5a3b;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.newsletter button:hover {
+  background-color: #c8e6c9;
+}
+
+.password-form {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      min-width: 300px;
+}
+
+.password-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2a5a3b;
+  font-size: 16px;
+}
+
+.password-form input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border 0.3s;
+}
+
+.password-form input[type="password"]:focus {
+  outline: none;
+  border-color: #2a5a3b;
+  box-shadow: 0 0 0 2px rgba(42, 90, 59, 0.2);
+}
+
+.password-form button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+
+.password-form button[type="submit"] {
+  background-color: #2a5a3b;
+  color: white;
+}
+
+.password-form button[type="submit"]:hover {
+  background-color: #1d472b;
+}
+
+.password-form button[type="button"] {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.password-form button[type="button"]:hover {
+  background-color: #3d9e52;
+}
+
+
+

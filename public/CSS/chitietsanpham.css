@@ -1,0 +1,13 @@
+.product-list, .product-detail {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+.product-item {
+  border: 1px solid #ddd;
+  padding: 15px;
+  display: inline-block;
+  width: 200px;
+  margin: 10px;
+  cursor: pointer;
+}

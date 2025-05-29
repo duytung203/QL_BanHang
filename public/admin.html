@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý người dùng</title>
+  <link rel="stylesheet" href="/CSS/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Quản lý người dùng</h1>
+  <button id="logoutBtn">Đăng xuất</button>
+  <h2>Thêm người dùng</h2>
+  <div class="form-group">
+    <input placeholder="Username" id="username" />
+    <input placeholder="Email" id="email" />
+    <input placeholder="Password" id="password" type="password" />
+    <select id="role">
+      <option value="user">user</option>
+      <option value="admin">admin</option>
+    </select>
+    <button onclick="createUser()">Thêm</button>
+  </div>
+  <table id="userTable">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table> 
+  <script src="js/admin.js"></script>
+</body>
+</html>
