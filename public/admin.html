@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class="logo">ADMIN ThanhTra Tea</div>
   <h1>Quản lý người dùng</h1>
   <button id="logoutBtn">Đăng xuất</button>
   <h2>Thêm người dùng</h2>
@@ -23,7 +24,8 @@
     </select>
     <button onclick="createUser()">Thêm</button>
   </div>
-  <table id="userTable">
+  <div class="scrollable-table">
+    <table id="userTable">
     <thead>
       <tr>
         <th>Username</th>
@@ -33,7 +35,37 @@
       </tr>
     </thead>
     <tbody></tbody>
-  </table> 
+  </table>
+  </div> 
+<hr />
+  <h1>Quản lý sản phẩm</h1>
+<h2>Thêm sản phẩm</h2>
+<div class="form-group">
+  <input placeholder="Tên sản phẩm" id="productName" />
+  <input placeholder="Giá" id="productPrice" type="number" />
+  <input placeholder="Mô tả" id="productDescription" />
+  <input type="file" id="productImage" accept="image/*" />
+  <input placeholder="Loại sản phẩm" id="productCategory" />
+  <button onclick="createProduct()">Thêm sản phẩm</button>
+</div>
+<div class="scrollable-table">
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Loại sản phẩm</th>
+                    <th>Mô tả</th>
+                    <th>Xóa sản phẩm</th>
+                    <th>Cập nhật</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+                <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+            </tbody>
+        </table>
+    </div>
   <script src="js/admin.js"></script>
 </body>
 </html>

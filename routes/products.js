@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db');
 const app = express(); 
 
+//lay tat ca san pham
 router.get('/', (req, res) => {
   db.query('SELECT * FROM products', (err, results) => {
     if (err) {
@@ -14,7 +15,7 @@ router.get('/', (req, res) => {
 });
 
 
-
+//san pham goi yy
 router.get('/:id/related', (req, res) => {
   const productId = req.params.id;
   const getCategoryQuery = 'SELECT category FROM products WHERE id = ?';
@@ -36,7 +37,7 @@ router.get('/:id/related', (req, res) => {
     });
   });
 });
-
+//chi tiet san phampham
 router.get('/:id', (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id) || id <= 0 || !Number.isInteger(id)) {
@@ -69,6 +70,26 @@ router.get('/:id', (req, res) => {
       success: true,
       data: product
     });
+  });
+});
+//them san pham
+router.post('/products', (req, res) => {
+  const { name, price, image, category, mota } = req.body;
+  db.query(
+    'INSERT INTO products (name, price, image, category, mota) VALUES (?, ?, ?, ?, ?)',
+    [name, price, image, category, mota],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({ message: 'Đã thêm sản phẩm!', id: result.insertId });
+    }
+  );
+});
+
+// xoa san pham
+router.delete('/api/products/:id', async (req, res) => {
+  db.query('DELETE FROM products WHERE id = ?', [req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: 'Xoá thành công' });
   });
 });
 module.exports = router;
