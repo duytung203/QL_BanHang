@@ -4,11 +4,91 @@
   <meta charset="UTF-8">
   <title>Chi tiết sản phẩm</title>
   <link rel="stylesheet" href="CSS/chitietsanpham.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <h1>Chi tiết sản phẩm</h1>
-  <div id="product-detail">Đang tải...</div>
+  <header class="main-header" role="banner">
+  <div class="header-content">
+    <div class="logo" aria-label="Thanh Tra Tea">THANH TRA TEA</div>
+    <div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="#" id="menu-coffee">Coffee</a></li>
+          <li><a href="#" id="menu-tea">Trà</a></li>
+          <li class="menuchinh" aria-haspopup="true" aria-expanded="false">
+            <a>Menu</a>
+            <ul class="menuphu" role="menu">
+              <li><a href="#" id="menu-banh" >Bánh ngọt</a></li>
+              <li><a href="#" id="menu-anvat" >Đồ ăn vặt</a></li>
+            </ul>
+          </li>
+          <li><a href="tintuc.html">Tin tức</a></li>
+          <li><a href="tuyendung.html">Tuyển dụng</a></li>
+        </ul>
+      </nav>
+      </div>     
+    </div>
+  </div>
+</header>
+  <div id="notification" class="notification">
+    <span id="notification-text"></span>
+  </div>
 
+  <main>
+      <div id="product-detail"></div>
+  </main>
+  <h3 class="related-title">Sản phẩm liên quan</h3>
+  <div id="related-products" class="related-products-container"></div>
+
+  <footer class="footer">
+  <div class="footer-container">
+    <div class="footer-col">
+      <h3>Về chúng tôi</h3>
+      <p>Thanh Tra Tea - Thương hiệu trà và cà phê chất lượng cao từ 2025</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>Liên hệ</h3>
+      <div class="contact-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <a href="#">123 Đường ABC, TP.HÀ NỘi</a>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-phone"></i>
+        <a href="tel:0123456789">0123 456 789</a>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <a href="mailto:duytung2506@gmail.com">duytung2506@gmail.com</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>Giờ mở cửa</h3>
+      <p>Thứ 2 - Thứ 6: 7:00 - 21:00</p>
+      <p>Thứ 7 - CN: 8:00 - 22:00</p>
+    </div>
+
+    <div class="footer-col">
+      <h3>Đăng ký nhận tin</h3>
+      <div class="newsletter">
+        <input type="email" placeholder="Email của bạn">
+        <button>Đăng ký</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 Thanh Tra Tea. All Rights Reserved.</p>
+  </div>
+</footer>
+  <script src="js/main.js"></script>
   <script src="js/chitiet.js"></script>
 </body>
 </html>

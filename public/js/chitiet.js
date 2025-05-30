@@ -1,28 +1,166 @@
-const params = new URLSearchParams(window.location.search);
-const id = params.get('id');
+document.addEventListener('DOMContentLoaded', function() {
+  const params = new URLSearchParams(window.location.search);
+  const idParam = params.get('id');
+  const productId = parseInt(idParam);
+  
+  if (!idParam || isNaN(productId) || productId <= 0) {
+    showError('ID sản phẩm không hợp lệ');
+    return;
+  }
+  fetchProductDetail(productId);
+});
 
-fetch('/api/products/' + id)
-  .then(response => {
+async function fetchProductDetail(id) {
+  try {
+    const response = await fetch(`/api/products/${id}`);
+    const data = await response.json();
+    
     if (!response.ok) {
-      throw new Error("Không tìm thấy sản phẩm");
+      throw new Error(data.error || `Lỗi khi tải sản phẩm (Mã lỗi: ${response.status})`);
     }
-    return response.json();
-  })
-  .then(data => {
-    document.getElementById("product-detail").innerHTML = `
-      <h2>${data.name}</h2>
-      <img src="${data.image}" alt="${data.name}" />
-      <p>Giá: ${data.price.toLocaleString()}đ</p>
-      <p>${data.description || "Không có mô tả."}</p>
-    `;
-  })
-  .catch(error => {
-    document.getElementById("product-detail").innerHTML = `
-      <p style="color: red;">Lỗi: ${error.message}</p>
-    `;
-    console.error("Lỗi khi tải chi tiết sản phẩm:", error);
-  });
+    
+    if (!data.success || !data.data) {
+      throw new Error('Dữ liệu sản phẩm không hợp lệ');
+    }
+    
+    renderProduct(data.data);
+  } catch (error) {
+    console.error("Lỗi:", error);
+    showError(error.message);
+  }
+}
+
+function renderProduct(product) {
+  const productContainer = document.getElementById("product-detail");
+  
+  const formattedProduct = {
+    name: product.name || 'Tên sản phẩm không có',
+    price: product.price ? formatPrice(product.price) : 'Liên hệ',
+    originalPrice: product.originalPrice ? formatPrice(product.originalPrice) : null,
+    image: product.image || '/images/default-drink.jpg',
+    description: product.mota || "Không có mô tả chi tiết.",
+    rating: product.rating || 0,
+    reviewCount: product.reviewCount || 1234,
+    promotions: product.promotions || [],
+    deliveryTime: product.deliveryTime || '15-20 phút',
+    includes: product.includes || ['Ống hút', 'Túi giữ nhiệt']
+  };
+
+  // Tạo HTML cho khuyến mãi
+  const promotionsHTML = formattedProduct.promotions.length > 0 
+    ? `
+      <div class="promotion-section">
+        <h3 class="section-title">KHUYẾN MÃI</h3>
+        <ul class="promotion-list">
+          ${formattedProduct.promotions.map(promo => `<li>${promo}</li>`).join('')}
+        </ul>
+      </div>
+    `
+    : '';
+
+  // Tạo HTML cho sản phẩm
+  productContainer.innerHTML = `
+    <div class="product-detail-container">
+      <div class="back-container">
+        <a href="/" class="back-button">← Quay lại trang chủ</a>
+      </div>
+      
+      <h1 class="product-title">${formattedProduct.name}</h1>
+      
+      <div class="rating">
+        ${'★'.repeat(Math.round(formattedProduct.rating))} 
+        (${formattedProduct.reviewCount} đánh giá)
+      </div>
+      
+      <div class="product-image-container">
+        <img src="${formattedProduct.image}" 
+             alt="${formattedProduct.name}" 
+             class="product-image"
+             onerror="this.onerror=null;this.src='/images/default-drink.jpg'">
+      </div>
+      
+      <div class="price-container">
+        <span class="current-price">${formattedProduct.price}</span>
+        ${formattedProduct.originalPrice ? `<span class="original-price">${formattedProduct.originalPrice}</span>` : ''}
+        <div class="delivery-badge">GIAO TRONG ${formattedProduct.deliveryTime}</div>
+      </div>
+      
+      ${promotionsHTML}
+      
+      <div class="product-info">
+        <div class="description">${formattedProduct.description}</div>
+        
+        <div class="accessories">
+          <p>Kèm theo: ${formattedProduct.includes.join(', ')}</p>
+          <p>Bảo hành chất lượng 100%</p>
+          <p>Đổi trả trong vòng 2 giờ nếu không hài lòng</p>
+        </div>
+        
+        <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
+        <p class="delivery-info">Giao nhanh hoặc nhận tại quán</p>
+      </div>
+    </div>
+  `;
+  
+  // Thêm event listener cho nút thêm vào giỏ hàng
+  const addToCartBtn = productContainer.querySelector('.add-to-cart-btn');
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', () => addToCart(product));
+  }
+}
+
+function showError(message) {
+  document.getElementById("product-detail").innerHTML = `
+    <div class="error-message">
+      <i class="fa fa-exclamation-circle"></i>
+      <p>${message}</p>
+      <a href="/" class="back-link">Quay lại trang chủ</a>
+    </div>
+  `;
+}
+
+function formatPrice(price) {
+  return new Intl.NumberFormat('vi-VN', { 
+    style: 'currency', 
+    currency: 'VND' 
+  }).format(price);
+}
+
+function addToCart(product) {
+  console.log('Đã thêm vào giỏ hàng:', product);
+  const notification = document.getElementById('notification');
+  const notificationText = document.getElementById('notification-text');
+  notificationText.textContent = `Đã thêm ${product.name} vào giỏ hàng!`;
+  notification.classList.add('show');
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 1000);
+}
 
 
+async function loadRelatedProducts(id) {
+  try {
+    const response = await fetch(`/api/products/${id}/related`);
+    if (!response.ok) throw new Error('Không lấy được dữ liệu');
+    const related = await response.json();
 
+    const container = document.getElementById("related-products");
+    container.innerHTML = '';
+    related.forEach(product => {
+      container.innerHTML += `
+        <div class="product-card">
+          <img src="${product.image}" alt="${product.name}" onclick="location.href='chitietsanpham.html?id=${product.id}'" />
+          <h4>${product.name}</h4>
+          <p>${product.price.toLocaleString()}đ</p>
+        </div>
+      `;
+    });
+  } catch (error) {
+    console.error('Lỗi tải sản phẩm liên quan:', error);
+  }
+}
 
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id');
+if (productId) loadRelatedProducts(productId);
