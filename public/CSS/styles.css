@@ -226,8 +226,8 @@ border-radius: 5px;
 }
 
 #product-list {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display:flex;
+  flex-wrap: wrap;
   gap: 20px;
   position: relative;
   height: auto;
@@ -759,6 +759,135 @@ button[onclick="register()"]:hover {
     max-width: 100%;
     height: auto;
   }
+.customer-feedback {
+  padding: 50px 20px;
+  background-color: #fdfaf6;
+  text-align: center;
+}
+
+.customer-feedback h2 {
+  font-size: 28px;
+  color: #2f5621;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.feedback-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.feedback-card {
+  background-color: #fff;
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.feedback-card:hover {
+  transform: translateY(-5px);
+}
+
+.feedback-card .content {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.feedback-card .author {
+  font-weight: bold;
+  color: #2f5621;
+}
+
+#feedbackForm {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#feedbackForm input[type="text"],
+#feedbackForm textarea {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+#feedbackForm input[type="text"]:focus,
+#feedbackForm textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+#feedbackForm textarea {
+  resize: vertical;
+}
+
+#feedbackForm button[type="submit"] {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+#feedbackForm button[type="submit"]:hover {
+  background-color: #28a745;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+#feedbackForm button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+#feedbackMessage {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#feedbackMessage.success {
+  background-color: #d4edda;
+  color: #155724;
+  opacity: 1;
+}
+
+#feedbackMessage.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  opacity: 1;
+}
+
+::placeholder {
+  color: #a0a0a0;
+  opacity: 1;
+}
 
 
 

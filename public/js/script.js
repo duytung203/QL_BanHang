@@ -73,6 +73,11 @@ function renderPagination() {
 
 
 function showQuantityModal(index) {
+    const token = localStorage.getItem('token');
+  if (!token) {
+    alert("Bạn vui lòng đăng nhập");
+    return;
+  }
   selectedProductIndex = index;
   document.getElementById("quantityInput").value = 1;
   document.getElementById("quantityModal").style.display = "flex";
@@ -391,26 +396,15 @@ function filterProducts() {
   fetch(`/api/products/search?keyword=${encodeURIComponent(searchQuery)}`)
     .then(response => response.json())
     .then(products => {
-      const productList = document.getElementById('product-list');
-      productList.innerHTML = '';
-
       if (Array.isArray(products) && products.length > 0) {
+        currentProductList = products;
+        currentPage = 1;
+        renderProducts(currentPage);
+        renderPagination();
         document.getElementById('noProductsMessage').style.display = 'none';
-
-        products.forEach(product => {
-          const productItem = document.createElement('div');
-          productItem.className = 'product-card';
-
-          productItem.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="product-image" onclick="location.href='chitietsanpham.html?id=${product.id}'" />
-            <h3>${product.name}</h3>
-            <p>Giá: ${Number(product.price).toLocaleString()}đ</p>
-            <button class="add-to-cart-btn">Thêm vào giỏ</button>
-          `;
-
-          productList.appendChild(productItem);
-        });
       } else {
+        document.getElementById('product-list').innerHTML = '';
+        document.getElementById('pagination').innerHTML = '';
         document.getElementById('noProductsMessage').style.display = 'block';
       }
     })
@@ -419,4 +413,21 @@ function filterProducts() {
     });
 }
 
+//feedback
+document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const messageDiv = document.getElementById('feedbackMessage');
+  setTimeout(() => {
+    messageDiv.textContent = 'Cảm ơn phản hồi của bạn! Chúng tôi đã nhận được thông tin.';
+    messageDiv.className = 'success';
+    
+    // Reset form sau 3 giây
+    setTimeout(() => {
+      this.reset();
+      messageDiv.style.opacity = '0';
+    }, 3000);
+  }, 1000);
+});
 

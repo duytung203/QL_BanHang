@@ -42,7 +42,7 @@ router.get('/:id/related', (req, res) => {
       SELECT * FROM products
       WHERE category = ? AND id != ?
       ORDER BY RAND()
-      LIMIT 8
+      LIMIT 6
     `;
     db.query(getRelatedQuery, [category, productId], (err, relatedResult) => {
       if (err) return res.status(500).json({ error: 'Lỗi truy vấn sản phẩm liên quan' });
