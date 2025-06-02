@@ -25,10 +25,11 @@ h1 {
 
 
 .section {
-    margin-left: 600px;
+    margin: 30px auto; 
     background-color: white;
     border-radius: 8px;
     padding: 20px;
+    width: 90%;
     max-width: 800px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }

@@ -13,9 +13,22 @@ router.get('/', (req, res) => {
     res.json(results);
   });
 });
+// tim kiem san pham
+router.get('/search', (req, res) => {
+  const keyword = req.query.keyword || '';
+  const sql = "SELECT * FROM products WHERE name LIKE ?";
+  db.query(sql, [`%${keyword}%`], (err, results) => {
+    if (err) {
+      console.error('Lỗi truy vấn:', err);
+      return res.status(500).json({ error: 'Lỗi server' });
+    }
+    res.json(results);
+  });
+});
 
 
-//san pham goi yy
+
+//san pham goi y
 router.get('/:id/related', (req, res) => {
   const productId = req.params.id;
   const getCategoryQuery = 'SELECT category FROM products WHERE id = ?';
@@ -37,7 +50,7 @@ router.get('/:id/related', (req, res) => {
     });
   });
 });
-//chi tiet san phampham
+//chi tiet san pham
 router.get('/:id', (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id) || id <= 0 || !Number.isInteger(id)) {
@@ -72,25 +85,47 @@ router.get('/:id', (req, res) => {
     });
   });
 });
+
 //them san pham
-router.post('/products', (req, res) => {
+router.post('/add', (req, res) => {
   const { name, price, image, category, mota } = req.body;
-  db.query(
-    'INSERT INTO products (name, price, image, category, mota) VALUES (?, ?, ?, ?, ?)',
-    [name, price, image, category, mota],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: 'Đã thêm sản phẩm!', id: result.insertId });
+
+  if (!name || !price || !category) {
+    return res.status(400).json({ message: 'Thiếu thông tin sản phẩm' });
+  }
+  const query = 'INSERT INTO products (name, price, image, category, mota) VALUES (?, ?, ?, ?, ?)';
+  db.query(query, [name, price, image, category, mota], (err, result) => {
+    if (err) {
+      console.error('Lỗi khi thêm sản phẩm:', err);
+      return res.status(500).json({ message: 'Đã xảy ra lỗi khi thêm sản phẩm' });
     }
-  );
+    res.status(200).json({ message: 'Sản phẩm đã được thêm thành công!', productId: result.insertId });
+  });
 });
 
 // xoa san pham
-router.delete('/api/products/:id', async (req, res) => {
-  db.query('DELETE FROM products WHERE id = ?', [req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: err });
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  db.query('DELETE FROM products WHERE id = ?', [id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Xoá thành công' });
   });
 });
+
+// update san pham
+router.put('/:id', (req, res) => {
+  const { name, price, category, image, mota } = req.body;
+  const id = req.params.id;
+
+  const sql = 'UPDATE products SET name = ?, price = ?, category = ?, image = ?, mota = ? WHERE id = ?';
+  const values = [name, price, category, image, mota, id];
+
+  db.query(sql, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Cập nhật sản phẩm thành công' });
+  });
+});
+
+
 module.exports = router;
 

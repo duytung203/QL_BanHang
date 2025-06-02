@@ -232,6 +232,8 @@ border-radius: 5px;
   position: relative;
   height: auto;
   min-height: 1000px;
+  align-items: start;
+  justify-content: flex-start;
 }
 
 .product-page {

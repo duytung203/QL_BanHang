@@ -358,6 +358,7 @@ function filterCategory(category) {
   renderProducts(1);
 }
 
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const response = await fetch('/api/products');
@@ -379,12 +380,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+//loc sp
+function filterProducts() {
+  const searchQuery = document.getElementById('searchInput').value.trim();
+  if (searchQuery.length === 0) {
+    document.getElementById('noProductsMessage').style.display = 'none';
+    return;
+  }
 
+  fetch(`/api/products/search?keyword=${encodeURIComponent(searchQuery)}`)
+    .then(response => response.json())
+    .then(products => {
+      const productList = document.getElementById('product-list');
+      productList.innerHTML = '';
 
+      if (Array.isArray(products) && products.length > 0) {
+        document.getElementById('noProductsMessage').style.display = 'none';
 
+        products.forEach(product => {
+          const productItem = document.createElement('div');
+          productItem.className = 'product-card';
 
+          productItem.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" class="product-image" onclick="location.href='chitietsanpham.html?id=${product.id}'" />
+            <h3>${product.name}</h3>
+            <p>Giá: ${Number(product.price).toLocaleString()}đ</p>
+            <button class="add-to-cart-btn">Thêm vào giỏ</button>
+          `;
 
-
-
+          productList.appendChild(productItem);
+        });
+      } else {
+        document.getElementById('noProductsMessage').style.display = 'block';
+      }
+    })
+    .catch(error => {
+      console.error("Có lỗi khi gọi API:", error);
+    });
+}
 
 
