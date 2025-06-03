@@ -26,15 +26,33 @@ function renderProducts(page = 1) {
   const newPage = document.createElement("div");
   newPage.className = `product-page slide-in-${direction}`;
 
-  pageProducts.forEach((product, index) => {
+  pageProducts.forEach(product => {
     const card = document.createElement("div");
     card.className = "product-card";
-    card.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-image" onclick="location.href='chitietsanpham.html?id=${product.id}'" />
-      <h3 onclick="location.href='chitietsanpham.html?id=${product.id}'" style="cursor: pointer;">${product.name}</h3>
-      <p>Giá: ${product.price.toLocaleString()}đ</p>
-      <button onclick="showQuantityModal(${start + index})">Thêm vào giỏ</button>
-    `;
+
+    const image = document.createElement("img");
+    image.src = product.image;
+    image.alt = product.name;
+    image.className = "product-image";
+    image.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+
+    const title = document.createElement("h3");
+    title.textContent = product.name;
+    title.style.cursor = "pointer";
+    title.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+
+    const price = document.createElement("p");
+    price.textContent = `Giá: ${product.price.toLocaleString()}đ`;
+
+    const button = document.createElement("button");
+    button.textContent = "Thêm vào giỏ";
+    button.addEventListener("click", () => showQuantityModal(product));
+
+    card.appendChild(image);
+    card.appendChild(title);
+    card.appendChild(price);
+    card.appendChild(button);
+
     newPage.appendChild(card);
   });
 
@@ -58,6 +76,7 @@ function renderProducts(page = 1) {
   renderPagination();
 }
 
+
 function renderPagination() {
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
@@ -71,67 +90,76 @@ function renderPagination() {
   }
 }
 
+  function goToCart() {
+    window.location.href = 'giohang.html';
+  }
 
-function showQuantityModal(index) {
-    const token = localStorage.getItem('token');
+let selectedProduct = null;
+
+function showQuantityModal(product) {
+  const token = localStorage.getItem('token');
   if (!token) {
     alert("Bạn vui lòng đăng nhập");
     return;
   }
-  selectedProductIndex = index;
+  selectedProduct = product;
   document.getElementById("quantityInput").value = 1;
   document.getElementById("quantityModal").style.display = "flex";
 }
 
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
 function confirmAddToCart() {
   const quantity = parseInt(document.getElementById("quantityInput").value);
-  if (isNaN(quantity) || quantity < 1) {
-    alert("Vui lòng nhập số lượng hợp lệ.");
+  if (!selectedProduct || isNaN(quantity) || quantity <= 0) {
+    alert("Số lượng không hợp lệ");
     return;
   }
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const product = products[selectedProductIndex];
-  const existing = cart.find(item => item.name === product.name);
-  if (existing) {
-    existing.quantity += quantity;
+  const index = cart.findIndex(item => item.id === selectedProduct.id);
+  if (index !== -1) {
+    cart[index].quantity += quantity;
   } else {
-    cart.push({ ...product, quantity });
+    cart.push({
+      id: selectedProduct.id,
+      name: selectedProduct.name,
+      price: selectedProduct.price,
+      image: selectedProduct.image,
+      quantity: quantity,
+    });
   }
+
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
   closeQuantityModal();
-  showToast("Đã thêm vào giỏ hàng!");
-};
-
+  alert("Đã thêm vào giỏ hàng!");
+}
 
 function closeQuantityModal() {
   document.getElementById("quantityModal").style.display = "none";
+  selectedProduct = null;
 }
-
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.className = "toast show";
-  setTimeout(() => {
-    toast.className = "toast";
-  }, 2500);
-}
-
-function removeFromCart(productName) {
-  const index = cart.findIndex(item => item.name === productName);
-  if (index > -1) {
-    cart.splice(index, 1);
-  }
-  updateCartCount();
-  renderCart();
-}
-
 function updateCartCount() {
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  document.getElementById("cart-count").innerText = totalItems;
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+  document.getElementById("cart-count").textContent = total;
 }
+
+function saveCart(cart) {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return;
+  let allCarts = JSON.parse(localStorage.getItem("carts")) || {};
+  allCarts[userId] = cart;
+  localStorage.setItem("carts", JSON.stringify(allCarts));
+}
+function loadCart() {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return [];
+  const allCarts = JSON.parse(localStorage.getItem("carts")) || {};
+  return allCarts[userId] || [];
+}
+let cart = loadCart();
 
 
 function toggleModal(show) {
@@ -147,34 +175,6 @@ fetch('index.html')
     document.getElementById('modal-container').appendChild(modal);
   });         
 
-  
-function toggleCart() {
-  const modal = document.getElementById("cartModal");
-  if (modal.style.display === "flex") {
-    modal.style.display = "none";
-  } else {
-    renderCart();
-    modal.style.display = "flex";
-  }
-}
-
-function renderCart() {
-  const list = document.getElementById("cart-items");
-  list.innerHTML = "";
-  if (cart.length === 0) {
-    list.innerHTML = "<li>Giỏ hàng trống.</li>";
-    return;
-  }
-
-  cart.forEach(item => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${item.name} x${item.quantity} - ${item.price.toLocaleString()}đ
-      <button onclick="removeFromCart('${item.name}')">Xóa</button>
-    `;
-    list.appendChild(li);
-  });
-}
 
 window.onclick = function(event) {
   const loginModal = document.getElementById("loginModal");
@@ -206,6 +206,8 @@ renderProducts();
   if (res.ok) {
     localStorage.setItem('token', data.token);
     localStorage.setItem('username', data.username);
+    localStorage.setItem('userId', data.userId);
+     localStorage.removeItem("cart"); 
     updateUserMenu();      
     toggleModal(false);    
     alert(data.message);   
@@ -268,7 +270,7 @@ function updateUserMenu() {
           <a href="#" onclick="logout()">Đăng xuất</a>
           </div>
       </div>
-        <button class="cart-btn" onclick="toggleCart()">Giỏ hàng (<span id="cart-count">0</span>)</button></div> 
+        <button class="cart-btn" onclick="goToCart()">Giỏ hàng (<span id="cart-count">0</span>)</button></div> 
       </div>
     `;
     const modal = document.getElementById('loginModal');
@@ -283,11 +285,11 @@ function toggleUserMenu() {
 function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
-
+  localStorage.removeItem("cart"); 
   const userMenu = document.getElementById('userMenu');
   userMenu.innerHTML = `
     <button class="login-btn" onclick="toggleModal(true)">Đăng nhập</button>
-    <button class="cart-btn" onclick="toggleCart()">Giỏ hàng (<span id="cart-count">0</span>)</button>
+    <button class="cart-btn" onclick="goToCart()">Giỏ hàng (<span id="cart-count">0</span>)</button>
   `;
 }
 

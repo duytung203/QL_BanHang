@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Giỏ hàng</title>
+  <link rel="stylesheet" href="CSS/giohang.css">
+</head>
+<body>
+  <h1>Giỏ hàng của bạn</h1>
+  <table id="cart-table" border="1">
+    <thead>
+      <tr>
+        <th>Sản phẩm</th>
+        <th>Số lượng</th>
+        <th>Giá</th>
+        <th>Thành tiền</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody id="cart-body"></tbody>
+  </table>
+  <h3>Tổng tiền: <span id="total-price">0</span> VND</h3>
+  <button onclick="checkout()">Đặt hàng</button>
+  <script src="js/giohang.js"></script>
+</body>
+</html>

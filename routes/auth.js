@@ -33,6 +33,7 @@ router.post('/login', (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ message: 'Vui lòng nhập email và mật khẩu' });
   }
+
   const sql = 'SELECT * FROM users WHERE email = ?';
   db.query(sql, [email], async (err, results) => {
     if (err) return res.status(500).json({ message: 'Lỗi máy chủ', error: err });
@@ -41,9 +42,14 @@ router.post('/login', (req, res) => {
     const user = results[0];
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ message: 'Sai mật khẩu' });
-      req.session.userId = user.id;
-      req.session.role = user.role;
-      res.json({
+
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role
+    };
+
+    res.json({
       message: 'Đăng nhập thành công',
       role: user.role,
       username: user.username

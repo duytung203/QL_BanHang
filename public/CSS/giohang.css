@@ -1,0 +1,98 @@
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  
+  h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+  }
+  
+  #cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  #cart-table thead {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  #cart-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 500;
+  }
+  
+  #cart-table td {
+    padding: 15px;
+    border-bottom: 1px solid #ecf0f1;
+  }
+  
+  #cart-table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+  
+  #cart-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  #total-price {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 20px;
+  }
+  
+  h3 {
+    text-align: right;
+    margin-right: 20px;
+    font-size: 18px;
+  }
+  
+  button {
+    display: block;
+    margin: 30px auto;
+    padding: 12px 30px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #27ae60;
+  }
+  
+  /* Thêm hiệu ứng cho nút đặt hàng */
+  button:active {
+    transform: scale(0.98);
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    #cart-table {
+      font-size: 14px;
+    }
+    
+    #cart-table th, #cart-table td {
+      padding: 10px 5px;
+    }
+    
+    h1 {
+      font-size: 22px;
+    }
+  }

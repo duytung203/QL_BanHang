@@ -30,9 +30,10 @@
       </nav>
       <div id="userMenu"> 
         <button class="login-btn" onclick="toggleModal(true)" aria-label="Đăng nhập">Đăng nhập</button>
-        <button class="cart-btn" onclick="toggleCart()" aria-label="Giỏ hàng">
-          Giỏ hàng (<span id="cart-count" aria-live="polite">0</span>)
+        <button class="cart-btn" onclick="goToCart()" aria-label="Giỏ hàng">
+         Giỏ hàng (<span id="cart-count" aria-live="polite">0</span>)
         </button>
+
       </div>     
     </div>
   </div>
@@ -79,14 +80,6 @@
     <div id="product-loc"></div>
      <div id="pagination" class="pagination"></div>
   </div></main>
-  <div id="cartModal" class="modal">
-    <div class="modal-content">
-      <h2>Giỏ hàng</h2>
-      <ul id="cart-items"></ul>
-      <button onclick="toggleCart()">Đóng</button>
-    </div>
-  </div>
-  
  <div id="loginModal" class="modal">
     <div class="modal-content">
       <div class="tabs">
@@ -94,18 +87,18 @@
         <button onclick="switchTab('register')">Đăng ký</button>
       </div>
       <div id="loginForm">
-      <h2>Đăng nhập</h2>
-      <input type="text" id="loginUsername" placeholder="Nhập email của bạn">
-      <input type="password" id="loginPassword" placeholder="Mật khẩu">
-      <button onclick="login()">Đăng nhập</button>
-    </div>
-    <div id="registerForm" style="display: none;">
-      <h2>Đăng ký</h2>
-      <input type="text" id="registerUsername" placeholder="Thông tin người dùng">
-      <input type="email" id="registerEmail" placeholder="Email">
-      <input type="password" id="registerPassword" placeholder="Mật khẩu">
-      <button onclick="register()">Đăng ký</button>
-    </div>
+  <h2>Đăng nhập</h2>
+  <input type="text" id="login-username" placeholder="Nhập email của bạn">
+  <input type="password" id="login-password" placeholder="Mật khẩu">
+  <button onclick="login()">Đăng nhập</button>
+</div>
+<div id="registerForm" style="display: none;">
+  <h2>Đăng ký</h2>
+  <input type="text" id="register-username" placeholder="Thông tin người dùng">
+  <input type="email" id="register-email" placeholder="Email">
+  <input type="password" id="register-password" placeholder="Mật khẩu">
+  <button onclick="register()">Đăng ký</button>
+</div>
     </div>
   </div>
   <!-- modal nhap so luong -->
