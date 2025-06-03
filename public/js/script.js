@@ -414,20 +414,118 @@ function filterProducts() {
 }
 
 //feedback
-document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+document.getElementById('feedbackForm').addEventListener('submit', async function (e) {
   e.preventDefault();
-  
+
   const formData = new FormData(this);
+  const name = formData.get('name');
+  const content = formData.get('content');
   const messageDiv = document.getElementById('feedbackMessage');
-  setTimeout(() => {
-    messageDiv.textContent = 'Cảm ơn phản hồi của bạn! Chúng tôi đã nhận được thông tin.';
-    messageDiv.className = 'success';
-    
-    // Reset form sau 3 giây
-    setTimeout(() => {
+  messageDiv.textContent = 'Đang gửi phản hồi...';
+  messageDiv.className = 'info';
+  messageDiv.style.opacity = '1';
+
+  try {
+    const response = await fetch('/api/feedback/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, content })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      messageDiv.textContent = data.message;
+      messageDiv.className = 'success';
       this.reset();
-      messageDiv.style.opacity = '0';
-    }, 3000);
-  }, 1000);
+
+      setTimeout(() => {
+        messageDiv.style.opacity = '0';
+      }, 3000);
+    } else {
+      messageDiv.textContent = data.message || 'Gửi thất bại.';
+      messageDiv.className = 'error';
+    }
+  } catch (error) {
+    console.error('Lỗi gửi phản hồi:', error);
+    messageDiv.textContent = 'Lỗi kết nối đến máy chủ.';
+    messageDiv.className = 'error';
+  }
 });
+
+
+async function loadFeedbacks() {
+  const response = await fetch('/api/feedback/list');
+  const feedbacks = await response.json();
+
+  const listDiv = document.getElementById('feedbackList');
+  listDiv.innerHTML = ''; 
+
+  if (feedbacks.length === 0) {
+    listDiv.innerHTML = '<p>Chưa có đánh giá nào.</p>';
+    return;
+  }
+
+  feedbacks.forEach(feedback => {
+    const item = document.createElement('div');
+    item.classList.add('feedback-item');
+    item.innerHTML = `
+      <p><strong>${feedback.name}</strong> (${new Date(feedback.created_at).toLocaleString()}):</p>
+      <p>${feedback.content}</p>
+      <hr />
+    `;
+    listDiv.appendChild(item);
+  });
+}
+
+window.addEventListener('DOMContentLoaded', loadFeedbacks);
+
+
+document.getElementById('feedbackForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  const name = formData.get('name');
+  const content = formData.get('content');
+
+  const messageDiv = document.getElementById('feedbackMessage');
+  messageDiv.textContent = 'Đang gửi phản hồi...';
+  messageDiv.className = 'info';
+  messageDiv.style.opacity = '1';
+
+  try {
+    const response = await fetch('/api/feedback/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, content })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      messageDiv.textContent = data.message;
+      messageDiv.className = 'success';
+      this.reset();
+
+      // Làm mờ sau 3 giây
+      setTimeout(() => {
+        messageDiv.style.opacity = '0';
+      }, 3000);
+    } else {
+      messageDiv.textContent = data.message || 'Gửi thất bại.';
+      messageDiv.className = 'error';
+    }
+  } catch (error) {
+    console.error('Lỗi gửi phản hồi:', error);
+    messageDiv.textContent = 'Lỗi kết nối đến máy chủ.';
+    messageDiv.className = 'error';
+  }
+});
+
+
+
+
+
+
+
 

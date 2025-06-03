@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý người dùng</title>
+  <title>Quản Lý Thanh Tra Tea</title>
   <link rel="stylesheet" href="/CSS/admin.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
 </head>
 <body>
   <div class="logo">ADMIN ThanhTra Tea</div>
-  <h1>Quản lý người dùng</h1>
+  <h1>Quản lý tài khoản người dùng</h1>
   <button id="logoutBtn">Đăng xuất</button>
   <h2>Thêm người dùng</h2>
   <div class="form-group">
@@ -19,8 +19,8 @@
     <input placeholder="Email" id="email" />
     <input placeholder="Password" id="password" type="password" />
     <select id="role">
-      <option value="user">user</option>
-      <option value="admin">admin</option>
+      <option value="user">Người dùng</option>
+      <option value="admin">Quản trị viên</option>
     </select>
     <button onclick="createUser()">Thêm</button>
   </div>
@@ -28,9 +28,9 @@
     <table id="userTable">
     <thead>
       <tr>
-        <th>Username</th>
+        <th>Tên người dùng</th>
         <th>Email</th>
-        <th>Role</th>
+        <th>Vai trò</th>
         <th>Hành động</th>
       </tr>
     </thead>
@@ -46,8 +46,8 @@
   <input type="text" name="image" placeholder="Ảnh (vd:images/tra/tra_chanh.jpg)">
   <select name="category">
   <option value="">Chọn danh mục</option>
-  <option value="tea">Tea</option>
-  <option value="coffee">Coffee</option>
+  <option value="tea">Trà</option>
+  <option value="coffee">Cà phê</option>
   <option value="banh">Bánh</option>
   <option value="anvat">Ăn vặt</option>
   </select>
@@ -76,8 +76,8 @@
     <input type="number" id="editPrice" placeholder="Giá"><br><br>
     <select id="editCategory">
       <option value="">Chọn danh mục</option>
-      <option value="tea">Tea</option>
-      <option value="coffee">Coffee</option>
+      <option value="tea">Trà</option>
+      <option value="coffee">Cà phê</option>
       <option value="banh">Bánh</option>
       <option value="anvat">Ăn vặt</option>
     </select>
@@ -88,7 +88,7 @@
   </div>
 </div>
             <tbody id="productTableBody">
-                <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+                <!-- du lieu dc them tu javascript -->
             </tbody>
         </table>
     </div>

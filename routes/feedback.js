@@ -8,7 +8,6 @@ router.post('/add', (req, res) => {
   if (!name || !content) {
     return res.status(400).json({ message: 'Vui lòng nhập đầy đủ thông tin.' });
   }
-
   const sql = 'INSERT INTO feedbacks (name, content) VALUES (?, ?)';
   db.query(sql, [name, content], (err, result) => {
     if (err) {
@@ -19,9 +18,11 @@ router.post('/add', (req, res) => {
   });
 });
 
+
+
 // Lấy danh sách feedback
 router.get('/list', (req, res) => {
-  db.query('SELECT * FROM feedbacks ORDER BY created_at DESC LIMIT 10', (err, results) => {
+  db.query('SELECT * FROM feedbacks ORDER BY created_at DESC LIMIT 5', (err, results) => {
     if (err) {
       console.error('Lỗi khi lấy danh sách feedback:', err);
       return res.status(500).json({ message: 'Lỗi máy chủ.' });
@@ -29,5 +30,6 @@ router.get('/list', (req, res) => {
     res.json(results);
   });
 });
+
 
 module.exports = router;
