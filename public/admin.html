@@ -3,16 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản Lý Thanh Tra Tea</title>
+  <title>Admin ThanhTra Tea</title>
   <link rel="stylesheet" href="/CSS/admin.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="logo">ADMIN ThanhTra Tea</div>
+  <aside class="sidebar">
+    <h2>ADMIN THANHTRATEA</h2>
+    <ul>
+      <li><a href="#">Trang Chủ</a></li>
+      <li><a onclick="showSection('userSection')">Quản lý người dùng</a></li>
+      <li><a onclick="showSection('productSection')">Quản lý sản phẩm</a></li>
+      <li><a onclick="showSection('orderSection')">Quản lý đơn hàng</a></li>
+      <li><a href="#">Thống kê</a></li>
+      <li><a href="#" id="logoutBtn">Đăng xuất</a></li>
+    </ul>
+  </aside>
+
+  <div id="userSection" style="display: none;">
   <h1>Quản lý tài khoản người dùng</h1>
-  <button id="logoutBtn">Đăng xuất</button>
   <h2>Thêm người dùng</h2>
   <div class="form-group">
     <input placeholder="Username" id="username" />
@@ -26,72 +37,95 @@
   </div>
   <div class="scrollable-table">
     <table id="userTable">
-    <thead>
-      <tr>
-        <th>Tên người dùng</th>
-        <th>Email</th>
-        <th>Vai trò</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  </div> 
-<hr />
-  <h1>Quản lý sản phẩm</h1>
-<h2>Thêm sản phẩm</h2>
-<form id="productForm" onsubmit="event.preventDefault(); createProduct();">
-  <input type="text" name="name" placeholder="Tên sản phẩm">
-  <input type="number" name="price" placeholder="Giá">
-  <input type="text" name="image" placeholder="Ảnh (vd:images/tra/tra_chanh.jpg)">
-  <select name="category">
-  <option value="">Chọn danh mục</option>
-  <option value="tea">Trà</option>
-  <option value="coffee">Cà phê</option>
-  <option value="banh">Bánh</option>
-  <option value="anvat">Ăn vặt</option>
-  </select>
-  <input name="mota" placeholder="Mô tả sản phẩm"></input>
-  <button type="submit">Thêm sản phẩm</button>
-</form>
+      <thead>
+        <tr>
+          <th>Tên người dùng</th>
+          <th>Email</th>
+          <th>Vai trò</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 
-<div class="scrollable-table">
-        <table id="productTable">
-            <thead>
-                <tr>
-                    <th>Ảnh</th>
-                    <th>Tên</th>
-                    <th>Giá</th>
-                    <th>Danh mục</th>
-                    <th>Mô tả</th>
-                    <th>Xóa sản phẩm</th>
-                    <th>Cập nhật</th>
-                </tr>
-            </thead>
-<div id="editModal" style="display: none; position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999;">
-  <div style="background: #fff; padding: 20px; width: 400px; margin: 100px auto; position: relative;">
-    <h3>Chỉnh sửa sản phẩm</h3>
-    <input type="text" id="editName" placeholder="Tên sản phẩm"><br><br>
-    <input type="number" id="editPrice" placeholder="Giá"><br><br>
-    <select id="editCategory">
+
+  <div id="productSection" style="display: none;">
+  <h1>Quản lý sản phẩm</h1>
+  <h2>Thêm sản phẩm</h2>
+  <form id="productForm" onsubmit="event.preventDefault(); createProduct();">
+    <input type="text" name="name" placeholder="Tên sản phẩm">
+    <input type="number" name="price" placeholder="Giá">
+    <input type="text" name="image" placeholder="Ảnh (vd:images/tra/tra_chanh.jpg)">
+    <select name="category">
       <option value="">Chọn danh mục</option>
       <option value="tea">Trà</option>
       <option value="coffee">Cà phê</option>
       <option value="banh">Bánh</option>
       <option value="anvat">Ăn vặt</option>
     </select>
-    <input type="text" id="editImage" placeholder="Link ảnh"><br><br>
-    <textarea id="editMota" placeholder="Mô tả sản phẩm"></textarea><br><br>
-    <button onclick="submitUpdate()">Lưu</button>
-    <button onclick="closeEditModal()">Hủy</button>
+    <input name="mota" placeholder="Mô tả sản phẩm">
+    <button type="submit">Thêm sản phẩm</button>
+  </form>
+    <div class="scrollable-table">
+    <table id="productTable">
+      <thead>
+        <tr>
+          <th>Ảnh</th>
+          <th>Tên</th>
+          <th>Giá</th>
+          <th>Danh mục</th>
+          <th>Mô tả</th>
+          <th>Xóa sản phẩm</th>
+          <th>Cập nhật</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody">
+        <!-- dữ liệu thêm bằng JS -->
+      </tbody>
+    </table>
   </div>
 </div>
-            <tbody id="productTableBody">
-                <!-- du lieu dc them tu javascript -->
-            </tbody>
-        </table>
+
+  <div id="orderSection">
+    <h1>Quản lý đơn hàng</h1>
+    <div class="scrollable-table">
+      <table id="order-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Người đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+          </tr>
+        </thead>
+        <tbody id="order-list"></tbody>
+      </table>
     </div>
+  </div>
+
+    <div id="editModal">
+      <div>
+        <h3>Chỉnh sửa sản phẩm</h3>
+        <input type="text" id="editName" placeholder="Tên sản phẩm"><br><br>
+        <input type="number" id="editPrice" placeholder="Giá"><br><br>
+        <select id="editCategory">
+          <option value="">Chọn danh mục</option>
+          <option value="tea">Trà</option>
+          <option value="coffee">Cà phê</option>
+          <option value="banh">Bánh</option>
+          <option value="anvat">Ăn vặt</option>
+        </select><br><br>
+        <input type="text" id="editImage" placeholder="Link ảnh"><br><br>
+        <textarea id="editMota" placeholder="Mô tả sản phẩm"></textarea><br><br>
+        <button onclick="submitUpdate()">Lưu</button>
+        <button onclick="closeEditModal()">Hủy</button>
+      </div>
+    </div>
+  </main>
+
   <script src="js/admin.js"></script>
 </body>
 </html>

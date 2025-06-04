@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+const authenticate = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Bạn cần đăng nhập để thực hiện hành động này' });
+  }
+  next();
+};
+
 router.post('/checkout', async (req, res) => {
   try {
     const { cart } = req.body;
@@ -49,6 +56,29 @@ router.post('/checkout', async (req, res) => {
     return res.status(500).json({ message: 'Lỗi hệ thống, vui lòng thử lại sau.', detail: err.message });
   }
 });
+// dơn hang cua toi
+router.get('/my-orders', authenticate, async (req, res) => {
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ error: 'Không có thông tin người dùng, vui lòng đăng nhập lại.' });
+  }
+  const userId = req.user.id;
+  try {
+    const [orders] = await db.query('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC', [userId]);
+    for (let order of orders) {
+      const [items] = await db.query(`
+        SELECT oi.*, p.name, p.image 
+        FROM order_items oi 
+        JOIN products p ON oi.product_id = p.id 
+        WHERE oi.order_id = ?`, [order.id]);
+      order.items = items;
+    }
+    res.json({ success: true, orders });
+  } catch (err) {
+    res.status(500).json({ error: 'Lỗi khi lấy đơn hàng' });
+  }
+});
+// quan ly don hang admin
+
 
 
 module.exports = router;

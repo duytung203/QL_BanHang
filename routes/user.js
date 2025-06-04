@@ -6,12 +6,6 @@ module.exports = (db) => {
   const router = express.Router();
 
 
-const authMiddleware = (req, res, next) => {
-  if (!req.session || !req.session.userId || req.session.role !== 'user') {
-    return res.status(401).json({ message: 'Bạn không có quyền truy cập' });
-  }
-  next();
-};
 // Lấy danh sách người dùng
 router.get('/', (req, res) => {
   db.query('SELECT id, username, email, role FROM users', (err, results) => {
@@ -60,12 +54,12 @@ router.put('/:id/reset', async (req, res) => {
 
  // load người dùng
 router.get('/info', (req, res) => {
-  if (!req.session.userId) {
+  if (!req.session.user || !req.session.user.id) {
     return res.status(401).json({ message: "Bạn chưa đăng nhập" });
   }
 
   const sql = 'SELECT username, email FROM users WHERE id = ?';
-  db.query(sql, [req.session.userId], (err, results) => {
+  db.query(sql, [req.session.user.id], (err, results) => {
     if (err) return res.status(500).json({ message: "Lỗi máy chủ" });
     if (results.length === 0) return res.status(404).json({ message: "Không tìm thấy người dùng" });
 
@@ -73,12 +67,12 @@ router.get('/info', (req, res) => {
   });
 });
 
+
 // Cập nhật username hoặc email
 
 router.post('/update', (req, res) => {
   const { username, email } = req.body;
-  const userId = req.session.userId;
-
+  const userId = req.session.user?.id;
   if (!userId) {
     return res.status(401).json({ message: "Bạn chưa đăng nhập" });
   }

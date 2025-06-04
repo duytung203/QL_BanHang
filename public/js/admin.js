@@ -202,7 +202,43 @@ async function deleteProduct(id) {
 
 loadProducts();
 
+function showSection(sectionId) {
+    document.getElementById('userSection').style.display = 'none';
+    document.getElementById('productSection').style.display = 'none';
+    document.getElementById('orderSection').style.display = 'none';
+    document.getElementById(sectionId).style.display = 'block';
+  }
 
+  window.onload = () => {
+    showSection('userSection');
+  };
+
+function loadOrders() {
+  fetch('/api/cart/all', { credentials: 'include' })
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('order-list');
+      tbody.innerHTML = '';
+
+      data.data.forEach(order => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${order.id}</td>
+            <td>${order.username}</td>
+            <td>${order.total_price.toLocaleString()}đ</td>
+            <td>${order.status}</td>
+            <td>${new Date(order.created_at).toLocaleString()}</td>
+          </tr>
+        `;
+      });
+    })
+    .catch(err => {
+      console.error('Lỗi khi load đơn hàng:', err);
+    });
+}
+
+
+loadOrders();
 
 
 

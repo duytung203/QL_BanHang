@@ -1,12 +1,13 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const idParam = params.get('id');
   const productId = parseInt(idParam);
-  
+
   if (!idParam || isNaN(productId) || productId <= 0) {
     showError('ID sản phẩm không hợp lệ');
     return;
   }
+
   fetchProductDetail(productId);
 });
 
@@ -14,15 +15,15 @@ async function fetchProductDetail(id) {
   try {
     const response = await fetch(`/api/products/${id}`);
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(data.error || `Lỗi khi tải sản phẩm (Mã lỗi: ${response.status})`);
     }
-    
+
     if (!data.success || !data.data) {
       throw new Error('Dữ liệu sản phẩm không hợp lệ');
     }
-    
+
     renderProduct(data.data);
   } catch (error) {
     console.error("Lỗi:", error);
@@ -32,7 +33,7 @@ async function fetchProductDetail(id) {
 
 function renderProduct(product) {
   const productContainer = document.getElementById("product-detail");
-  
+
   const formattedProduct = {
     name: product.name || 'Tên sản phẩm không có',
     price: product.price ? formatPrice(product.price) : 'Liên hệ',
@@ -46,8 +47,7 @@ function renderProduct(product) {
     includes: product.includes || ['Ống hút', 'Túi giữ nhiệt']
   };
 
-  // Tạo HTML cho khuyến mãi
-  const promotionsHTML = formattedProduct.promotions.length > 0 
+  const promotionsHTML = formattedProduct.promotions.length > 0
     ? `
       <div class="promotion-section">
         <h3 class="section-title">KHUYẾN MÃI</h3>
@@ -58,7 +58,6 @@ function renderProduct(product) {
     `
     : '';
 
-  // Tạo HTML cho sản phẩm
   productContainer.innerHTML = `
     <div class="product-detail-container">
       <div class="back-container">
@@ -95,18 +94,64 @@ function renderProduct(product) {
           <p>Bảo hành chất lượng 100%</p>
           <p>Đổi trả trong vòng 2 giờ nếu không hài lòng</p>
         </div>
-        
+
+        <div id="quantityModal" class="modal" style="display:none;">
+          <div class="modal-content">
+            <h3>Nhập số lượng</h3>
+            <input type="number" id="quantityInput" value="1" min="1" />
+            <div class="modal-buttons">
+              <button id="confirmAdd">Xác nhận</button>
+              <button id="cancelAdd">Hủy</button>
+            </div>
+          </div>
+        </div>
+
         <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
         <p class="delivery-info">Giao nhanh hoặc nhận tại quán</p>
       </div>
     </div>
   `;
-  
-  // Thêm event listener cho nút thêm vào giỏ hàng
-  const addToCartBtn = productContainer.querySelector('.add-to-cart-btn');
-  if (addToCartBtn) {
-    addToCartBtn.addEventListener('click', () => addToCart(product));
-  }
+
+  let selectedProduct = null;
+
+  document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("add-to-cart-btn")) {
+      selectedProduct = {
+        id: product.id,
+        name: formattedProduct.name,
+        price: product.price,
+        image: formattedProduct.image
+      };
+      document.getElementById("quantityModal").style.display = "flex";
+    }
+  });
+
+  document.getElementById("confirmAdd").addEventListener("click", () => {
+    const quantity = parseInt(document.getElementById("quantityInput").value);
+    if (quantity <= 0) {
+      alert("Số lượng phải lớn hơn 0");
+      return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingIndex = cart.findIndex(item => item.id === selectedProduct.id);
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += quantity;
+    } else {
+      selectedProduct.quantity = quantity;
+      cart.push(selectedProduct);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`Đã thêm "${selectedProduct.name}" với số lượng ${quantity} vào giỏ hàng!`);
+    document.getElementById("quantityModal").style.display = "none";
+
+    window.location.href = "giohang.html";
+  });
+
+  document.getElementById("cancelAdd").addEventListener("click", () => {
+    document.getElementById("quantityModal").style.display = "none";
+  });
 }
 
 function showError(message) {
@@ -120,24 +165,11 @@ function showError(message) {
 }
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('vi-VN', { 
-    style: 'currency', 
-    currency: 'VND' 
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
   }).format(price);
 }
-
-function addToCart(product) {
-  console.log('Đã thêm vào giỏ hàng:', product);
-  const notification = document.getElementById('notification');
-  const notificationText = document.getElementById('notification-text');
-  notificationText.textContent = `Đã thêm ${product.name} vào giỏ hàng!`;
-  notification.classList.add('show');
-  
-  setTimeout(() => {
-    notification.classList.remove('show');
-  }, 1000);
-}
-
 
 async function loadRelatedProducts(id) {
   try {

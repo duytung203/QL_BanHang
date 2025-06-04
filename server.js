@@ -8,6 +8,7 @@ const userRoutes = require('./routes/user');
 const productRoutes = require('./routes/products');
 const feedbackRoutes = require('./routes/feedback');
 const cartRouter = require('./routes/cart')
+
 require('dotenv').config();
 
 const app = express();
@@ -27,7 +28,6 @@ app.use(session({
     maxAge: 3600000
   }
 }));
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/products', productRoutes);
@@ -42,5 +42,5 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
+  console.log(`Server chạy tại http://localhost:${PORT}`);
 });

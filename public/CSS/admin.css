@@ -1,151 +1,114 @@
-/* Reset và font chữ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
-}
 
-body {
-  background-color: #f9f9f9;
-  color: #333;
-  line-height: 1.6;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.logo {
-  font-size: 28px;
-  font-weight: 700;
-  color: #2a5a3b;
-  font-family: 'Pacifico', cursive;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-   margin-right: auto;
-}
-h1 {
-  color: #2a5a3b;
-  font-size: 28px;
-  margin-bottom: 20px;
-  text-align: center;
-  padding-top: 30px;
-  padding-bottom: 10px;
-}
-
-h2 {
-  color: #2a5a3b;
-  font-size: 22px;
-  margin: 20px 0 15px;
-}
-
-
-input, select {
-  padding: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 200px;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #2a5a3b;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #1d472b;
-}
-
-#logoutBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: #d32f2f;
-}
-
-#logoutBtn:hover {
-  background-color: #b71c1c;
-}
-
-/* Bảng người dùng */
-#userTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-#userTable th {
-  background-color: #2a5a3b;
-  color: white;
-  padding: 12px;
-  text-align: left;
-}
-
-#userTable td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-#userTable tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-#userTable tr:hover {
-  background-color: #e0e0e0;
-}
-
-/* Nút hành động */
-.action-btn {
-  padding: 5px 10px;
-  margin-right: 5px;
-  font-size: 14px;
-}
-
-.edit-btn {
-  background-color: #1976d2;
-}
-
-.edit-btn:hover {
-  background-color: #1565c0;
-}
-
-.delete-btn {
-  background-color: #d32f2f;
-}
-
-.delete-btn:hover {
-  background-color: #b71c1c;
-}
-
-
-
-.form-group {
-  margin: 20px;
-  padding: 15px;
-  background: #f5f5f5;
-  border-radius: 5px;
-}
-.form-group input, .form-group button {
-  margin: 5px;
-  padding: 8px;
-  width: 200px;
-}
-.form-group button {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-        
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+    body {
+      display: flex;
+      min-height: 100vh;
+      background-color: #f5efef;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #2f3542;
+      color: #fff;
+      padding: 20px;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      margin-bottom: 30px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .sidebar ul {
+      list-style: none;
+    }
+    .sidebar ul li {
+      margin: 15px 0;
+    }
+    .sidebar ul li a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+    .sidebar ul li a:hover {
+      background-color: #57606f;
+    }
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    h2 {
+      margin: 20px 0 10px;
+    }
+    .form-group,
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input, select, textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      flex: 1;
+      min-width: 200px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #2ed573;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+    }
+    button:hover {
+      background-color: #1eae63;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    .scrollable-table {
+      overflow-x: auto;
+    }
+    #logoutBtn {
+      background-color: #ff4757;
+      margin-bottom: 20px;
+    }
+    #editModal {
+      display: none;
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+    #editModal > div {
+      background: #fff;
+      padding: 20px;
+      width: 400px;
+      margin: 100px auto;
+      position: relative;
+    }
+     
 #productTable {
   width: 100%;
   border-collapse: collapse;
@@ -181,7 +144,9 @@ button:hover {
   text-align: left;
 }
 #userTable th {
-  background-color: #1d6b34;
+  background-color: #fcfcfc;
   position: sticky;
   top: 0;
 }
+
+
