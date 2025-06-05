@@ -68,7 +68,7 @@ const createProduct = async () => {
   };
 
   try {
-    const response = await fetch('http://localhost:3000/api/products/add', {
+    const response = await fetch('/api/products/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -209,36 +209,88 @@ function showSection(sectionId) {
     document.getElementById(sectionId).style.display = 'block';
   }
 
-  window.onload = () => {
-    showSection('userSection');
-  };
+async function loadOrders() {
+  const res = await fetch('/api/cart/admin/orders');
+  const data = await res.json();
 
-function loadOrders() {
-  fetch('/api/cart/all', { credentials: 'include' })
-    .then(res => res.json())
-    .then(data => {
-      const tbody = document.getElementById('order-list');
-      tbody.innerHTML = '';
+  const tbody = document.querySelector('#order-list');
+  tbody.innerHTML = '';
 
-      data.data.forEach(order => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${order.id}</td>
-            <td>${order.username}</td>
-            <td>${order.total_price.toLocaleString()}đ</td>
-            <td>${order.status}</td>
-            <td>${new Date(order.created_at).toLocaleString()}</td>
-          </tr>
-        `;
-      });
-    })
-    .catch(err => {
-      console.error('Lỗi khi load đơn hàng:', err);
+  if (data.orders && data.orders.length > 0) {
+    data.orders.forEach(order => {
+       let statusButtons = `
+        <select onchange="updateOrderStatus(${order.id}, this.value)">
+          <option value="">Trạng thái đơn</option>
+          <option value="processing">Đang xử lý</option>  
+          <option value="completed">Hoàn thành</option>
+        </select>`;
+        let deleteButton = `
+          <button onclick="deleteOrder(${order.id})">Xóa</button>`;
+      tbody.innerHTML += `
+        <tr>
+          <tr data-order-id="${order.id}">
+          <td>${order.id}</td>
+          <td>${order.username}</td>
+          <td>${order.total_price}</td>
+          <td>${order.status}</td>
+          <td>${new Date(order.created_at).toLocaleString()}</td>
+          <td>${statusButtons} ${deleteButton}</td>
+        </tr>`;
     });
+  } else {
+    tbody.innerHTML = '<tr><td colspan="5">Không có đơn hàng nào.</td></tr>';
+  }
+}
+async function updateOrderStatus(orderId, status) {
+  try {
+    const response = await fetch(`/api/cart/orders/${orderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    });
+    if (!response.ok) {
+      throw new Error('Không thể cập nhật trạng thái đơn hàng');
+    }
+    const updatedOrder = await response.json();
+    const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
+    const statusCell = row.querySelector('td:nth-child(4)');
+    statusCell.textContent = updatedOrder.status;
+    alert('Trạng thái đơn hàng đã được cập nhật');
+  } catch (error) {
+    console.error(error);
+    alert('Có lỗi xảy ra khi cập nhật trạng thái');
+  }
+}
+
+async function deleteOrder(orderId) {
+  if (!confirm('Bạn có chắc muốn xóa đơn hàng này?')) return;
+
+  try {
+    const response = await fetch(`/api/cart/orders/${orderId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Không thể xóa đơn hàng');
+    }
+    const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
+    if (row) row.remove();
+    alert('Đã xóa đơn hàng thành công');
+  } catch (error) {
+    console.error(error);
+    alert('Có lỗi xảy ra khi xóa đơn hàng');
+  }
 }
 
 
-loadOrders();
+// Gọi loadOrders sau khi DOM đã tải xong
+document.addEventListener('DOMContentLoaded', function() {
+  loadOrders();
+});
+
+
 
 
 

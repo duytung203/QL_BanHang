@@ -117,7 +117,7 @@ router.post('/update', (req, res) => {
 // Đổi mật khẩu
 router.post('/password', (req, res) => {
   const { oldPassword, newPassword } = req.body;
-  const userId = req.session.userId;
+  const userId = req.session.user?.id;
 
   if (!userId || !oldPassword || !newPassword) {
     return res.status(400).json({ message: "Thiếu dữ liệu" });

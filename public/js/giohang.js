@@ -60,6 +60,7 @@ function checkout() {
     localStorage.removeItem("cart");
     cart = [];
     renderCart();
+    location.reload();
   })
   .catch(err => {
     console.error("Lỗi:", err);
@@ -83,47 +84,110 @@ document.addEventListener('DOMContentLoaded', () => {
       data.orders.forEach(order => {
         const orderElement = document.createElement('div');
         orderElement.classList.add('order');
-        
+        // Tạo header đơn hàng
         const orderHeader = document.createElement('div');
         orderHeader.classList.add('order-header');
-        orderHeader.textContent = `Đơn hàng #${order.id} - Ngày: ${new Date(order.created_at).toLocaleDateString()}`;
+        orderHeader.innerHTML = `
+          <span>Đơn hàng #${order.id}</span>
+          <span class="order-status status-${order.status ? order.status.toLowerCase() : 'pending'}">
+            ${order.status || 'Đang xử lý'}
+          </span>
+          <span class="order-date">Ngày: ${new Date(order.created_at).toLocaleDateString()}</span>
+        `;
         orderElement.appendChild(orderHeader);
         
+        // Tạo danh sách sản phẩm và tính tổng
         const itemsList = document.createElement('div');
         itemsList.classList.add('items-list');
+        
+        let orderTotal = 0;
         
         order.items.forEach(item => {
           const itemElement = document.createElement('div');
           itemElement.classList.add('item');
           
-          const itemImage = document.createElement('img');
-          itemImage.src = item.image;
+          const itemPrice = item.price || 0;
+          const itemQuantity = item.quantity || 1;
+          const itemTotal = itemPrice * itemQuantity;
+          orderTotal += itemTotal;
+                    
+          itemElement.innerHTML = `
+            <img src="${item.image || '/images/placeholder-product.png'}" alt="${item.name || 'Sản phẩm'}">
+            <div class="item-name">${item.name || 'Không có tên'}</div>
+            <div class="item-quantity">Số lượng: ${itemQuantity}</div>
+            <div class="item-price">${itemPrice.toLocaleString('vi-VN')} VND</div>
+            <div class="item-total">Thành tiền: ${itemTotal.toLocaleString('vi-VN')} VND</div>
+          `;
           
-          const itemName = document.createElement('div');
-          itemName.classList.add('item-name');
-          itemName.textContent = item.name;
-          
-          const itemPrice = document.createElement('div');
-          itemPrice.classList.add('item-price');
-          itemPrice.textContent = `${item.price} VND`; 
-
-          itemElement.appendChild(itemImage);
-          itemElement.appendChild(itemName);
-          itemElement.appendChild(itemPrice);
           itemsList.appendChild(itemElement);
         });
 
         orderElement.appendChild(itemsList);
+        
+        const orderFooter = document.createElement('div');
+        orderFooter.classList.add('order-footer');
+        // Tạo nút thanh toán
+        const payButton = document.createElement('button');
+        payButton.classList.add('pay-button');
+        payButton.textContent = 'Thanh toán ngay';
+        payButton.addEventListener('click', () => handlePayment(order.id, orderTotal));
+
+        
+        // Kiểm tra trạng thái để ẩn nút thanh toán nếu cần
+        if (order.status === 'completed' || order.status === 'cancelled') {
+          payButton.disabled = true;
+          payButton.textContent = order.status === 'completed' ? 'Đã thanh toán' : 'Đã hủy';
+          payButton.classList.add('disabled-button');
+        }
+        
+        orderFooter.innerHTML = `
+          <div class="total-section">
+            Tổng cộng: 
+            <span class="total-price">${orderTotal.toLocaleString('vi-VN')} VND</span>
+          </div>
+        `;
+        orderFooter.appendChild(payButton);
+        orderElement.appendChild(orderFooter);
+        
         ordersList.appendChild(orderElement);
       });
     } else {
-      alert('Không thể lấy thông tin đơn hàng.');
+      alert('Không thể lấy thông tin đơn hàng: ' + (data.message || 'Bạn cần đăng nhập để xem đơn hàng.'));
     }
   })
   .catch(error => {
     console.error('Lỗi:', error);
-    alert('Có lỗi xảy ra khi tải dữ liệu.');
+    alert('Có lỗi xảy ra khi tải dữ liệu: ' + error.message);
   });
 });
+// Hàm xử lý thanh toán
+function handlePayment(orderId, amount) {
+  if (confirm(`Bạn có chắc chắn muốn thanh toán đơn hàng #${orderId} với số tiền ${amount.toLocaleString('vi-VN')} VND?`)) {
+    fetch('/api/payment/process', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+       'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify({
+        order_id: orderId,
+        amount: amount
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Thanh toán thành công!');
+        location.reload();
+      } else {
+        alert('Thanh toán thất bại: ' + (data.message || 'Lỗi không xác định'));
+      }
+    })
+    .catch(error => {
+      console.error('Lỗi:', error);
+      alert('Có lỗi xảy ra khi thanh toán: ' + error.message);
+    });
+  }
+}
 
 window.onload = renderCart;

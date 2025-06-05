@@ -35,7 +35,6 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/cart', cartRouter);
 app.use('/api/auth', authRoutes(db));
 app.use('/api/user', userRoutes(db)); 
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
