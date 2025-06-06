@@ -26,7 +26,36 @@ router.get('/search', (req, res) => {
   });
 });
 
+router.get('/sort', (req, res) => {
+  const sort = req.query.sort;
+  let query = 'SELECT * FROM products';
+  let orderBy = '';
 
+  switch (sort) {
+    case 'price_asc':
+      orderBy = ' ORDER BY price ASC';
+      break;
+    case 'price_desc':
+      orderBy = ' ORDER BY price DESC';
+      break;
+    case 'name_asc':
+      orderBy = ' ORDER BY name ASC';
+      break;
+    case 'name_desc':
+      orderBy = ' ORDER BY name DESC';
+      break;
+    default:
+      return res.status(400).json({ error: 'Tham số sort không hợp lệ' });
+  }
+
+  db.query(query + orderBy, (err, results) => {
+    if (err) {
+      console.error('Lỗi SQL:', err);
+      return res.status(500).json({ error: 'Lỗi truy vấn sản phẩm' });
+    }
+    res.json(results);
+  });
+});
 
 //san pham goi y
 router.get('/:id/related', (req, res) => {

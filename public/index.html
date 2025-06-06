@@ -69,16 +69,29 @@
     <span class="dot"></span>
   </div>
 </div>
-<main><div class="container">
-    <h1>Danh sách sản phẩm</h1>
+<main>
+<div class="product-header">
+  <h1>Danh sách sản phẩm</h1>
+   <div class="search-sort-container"></div>
      <input type="text" id="searchInput" class="search-box" placeholder="Tìm kiếm sản phẩm..." onkeyup="filterProducts()">
+      <select id="sort">
+      <option value="">Sắp xếp</option>
+      <option value="price_asc">Giá tăng dần</option>
+      <option value="price_desc">Giá giảm dần</option>
+      <option value="name_asc">Tên A-Z</option>
+      <option value="name_desc">Tên Z-A</option>
+    </select>
+    <button onclick="searchProducts()">Tìm kiếm</button>
+  </div>
      <div id="noProductsMessage" style="display: none; color: red;">Không có sản phẩm phù hợp với từ khóa tìm kiếm.</div>
+  <div class="container">
     <div id="product-list">
       <!-- san pham duoc them bang js -->
     </div>
     <div id="product-loc"></div>
      <div id="pagination" class="pagination"></div>
-  </div></main>
+  </div>
+</main>
  <div id="loginModal" class="modal">
     <div class="modal-content">
       <div class="tabs">
@@ -130,7 +143,7 @@
       <h3>Thông tin về Thanh Tra Tea</h3>
       <p>Thanh Tra Tea - Thương hiệu trà và cà phê chất lượng cao từ 2025</p>
       <div class="social-links">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.facebook.com/tung.duy.7798/?locale=vi_VN"><i class="fab fa-facebook-f"></i></a>
         <a href="#"><i class="fab fa-instagram"></i></a>
         <a href="#"><i class="fab fa-youtube"></i></a>
       </div>

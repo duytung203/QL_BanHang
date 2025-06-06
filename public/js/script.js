@@ -484,6 +484,31 @@ async function loadFeedbacks() {
 
 window.addEventListener('DOMContentLoaded', loadFeedbacks);
 
+function searchProducts() {
+  const sort = document.getElementById('sort').value;
+
+  fetch(`/api/products/sort?sort=${sort}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!Array.isArray(data)) {
+        throw new Error(data.error || 'Lỗi không xác định từ server');
+      }
+
+      const container = document.getElementById('product-list');
+      container.innerHTML = '';
+
+      data.forEach(product => {
+        const div = document.createElement('div');
+        div.innerHTML = `<h3>${product.name}</h3><p>Giá: ${product.price}</p>`;
+        container.appendChild(div);
+      });
+    })
+    .catch(err => {
+      console.error('Lỗi tìm kiếm:', err.message);
+    });
+}
+
+
 
 
 
