@@ -503,22 +503,104 @@ body {
 }
 
 
+/* Quantity Modal Styles */
 .modal {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5); display: flex;
-  justify-content: center; align-items: center;
-  z-index: 999;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
-  background: white; padding: 20px; border-radius: 10px;
-  width: 300px; text-align: center;
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h3 {
+  color: #2a5a3b;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+#quantityInput {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 25px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+#quantityInput:focus {
+  border-color: #2a5a3b;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(42, 90, 59, 0.2);
 }
 
 .modal-buttons {
-  margin-top: 10px;
-  display: flex; justify-content: space-around;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
 }
+
+.modal-buttons button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#confirmAdd {
+  background-color: #2a5a3b;
+  color: white;
+  border: none;
+}
+
+#confirmAdd:hover {
+  background-color: #1d472b;
+  transform: translateY(-2px);
+}
+
+#cancelAdd {
+  background-color: #f5f5f5;
+  color: #555;
+  border: 1px solid #ddd;
+}
+
+#cancelAdd:hover {
+  background-color: #e0e0e0;
+}
+
+
+
 
 
 

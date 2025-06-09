@@ -25,7 +25,7 @@ router.get('/search', (req, res) => {
     res.json(results);
   });
 });
-
+// sap xep san pham
 router.get('/sort', (req, res) => {
   const sort = req.query.sort;
   let query = 'SELECT * FROM products';
@@ -145,10 +145,8 @@ router.delete('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
   const { name, price, category, image, mota } = req.body;
   const id = req.params.id;
-
   const sql = 'UPDATE products SET name = ?, price = ?, category = ?, image = ?, mota = ? WHERE id = ?';
   const values = [name, price, category, image, mota, id];
-
   db.query(sql, values, (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Cập nhật sản phẩm thành công' });

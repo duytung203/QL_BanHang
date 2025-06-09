@@ -9,6 +9,11 @@ body {
   color: #333;
   line-height: 1.6;
 }
+.wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
 
 .header-content {
@@ -135,6 +140,16 @@ body {
     gap: 1.5rem;
 }
 
+.secondary-stories a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.secondary-stories a:hover {
+  color: #4caf50;
+  text-decoration: underline;
+}
 article {
     padding: 1rem;
     border-bottom: 1px solid #eee;
@@ -162,7 +177,6 @@ h3 {
 
 .tips-section {
     background-color: #f5f5f5;
-    padding: 2rem;
     margin: 2rem;
     border-radius: 8px;
 }
@@ -312,4 +326,24 @@ h3 {
 
 .newsletter button:hover {
   background-color: #c8e6c9;
+}
+.tips-section a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.tips-section a:hover {
+  color: #4caf50;
+  text-decoration: underline;
+}
+.story-content a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.story-content a:hover {
+  color: #4caf50;
+  text-decoration: underline;
 }

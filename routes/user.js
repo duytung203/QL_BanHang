@@ -1,7 +1,6 @@
 const express = require('express');
 const db = require('../db');
 const bcrypt = require('bcrypt');
-
 module.exports = (db) => {
   const router = express.Router();
 
@@ -36,11 +35,31 @@ router.put('/:id', (req, res) => {
 
 // Xoá người dùng
 router.delete('/:id', (req, res) => {
-  db.query('DELETE FROM users WHERE id = ?', [req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: 'Xoá thành công' });
+  const userId = req.params.id;
+
+  // Kiểm tra xem người dùng có tồn tại hay không trước khi xoá
+  db.query('SELECT * FROM users WHERE id = ?', [userId], (err, results) => {
+    if (err) {
+      console.error("Lỗi truy vấn:", err);
+      return res.status(500).json({ message: 'Lỗi truy vấn cơ sở dữ liệu' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Người dùng không tồn tại' });
+    }
+
+    // Nếu tồn tại thì thực hiện xoá
+    db.query('DELETE FROM users WHERE id = ?', [userId], (err) => {
+      if (err) {
+        console.error("Lỗi khi xoá người dùng:", err.sqlMessage || err.message);
+        return res.status(500).json({ message: 'Lỗi khi xoá người dùng' });
+      }
+
+      res.json({ message: 'Xoá người dùng thành công' });
+    });
   });
 });
+
 
 // Reset mật khẩu
 router.put('/:id/reset', async (req, res) => {
@@ -79,7 +98,6 @@ router.post('/update', (req, res) => {
 
   const updates = [];
   const values = [];
-
   if (username) {
     if (username.trim() === '') {
       return res.status(400).json({ message: "Tên người dùng không hợp lệ" });

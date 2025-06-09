@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="CSS/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
+<body> 
+  <!-- Header -->
    <header class="main-header" role="banner">
   <div class="header-content">
     <div class="logo" aria-label="Thanh Tra Tea">THANH TRA TEA</div>
@@ -20,6 +21,7 @@
           <li class="menuchinh" aria-haspopup="true" aria-expanded="false">
             <a>Menu</a>
             <ul class="menuphu" role="menu">
+              <li><a href="#" id="menu-all" >Tất cả</a></li>
               <li><a href="#" id="menu-banh" >Bánh ngọt</a></li>
               <li><a href="#" id="menu-anvat" >Đồ ăn vặt</a></li>
             </ul>
@@ -28,6 +30,7 @@
           <li><a href="tuyendung.html">Tuyển dụng</a></li>
         </ul>
       </nav>
+      <!-- User Menu đăng nhập và giỏ hàng -->
       <div id="userMenu"> 
         <button class="login-btn" onclick="toggleModal(true)" aria-label="Đăng nhập">Đăng nhập</button>
         <button class="cart-btn" onclick="goToCart()" aria-label="Giỏ hàng">
@@ -37,7 +40,8 @@
     </div>
   </div>
 </header>
-
+<!-- Banner -->
+<div class="wrapper">
 <div class="banner-container">
   <div class="banner-slide">
     <img src="images/anh_banner1.jpg" alt="Khuyến mãi 1 - Freeship dù chỉ 1 ly">
@@ -70,17 +74,19 @@
   </div>
 </div>
 <main>
+  <!-- Danh sách sản phẩm -->
 <div class="product-header">
   <h1>Danh sách sản phẩm</h1>
    <div class="search-sort-container"></div>
      <input type="text" id="searchInput" class="search-box" placeholder="Tìm kiếm sản phẩm..." onkeyup="filterProducts()">
       <select id="sort">
-      <option value="">Sắp xếp</option>
-      <option value="price_asc">Giá tăng dần</option>
-      <option value="price_desc">Giá giảm dần</option>
-      <option value="name_asc">Tên A-Z</option>
-      <option value="name_desc">Tên Z-A</option>
-    </select>
+        <option value="">Sắp xếp</option>
+        <option value="price_asc">Giá tăng dần</option>
+        <option value="price_desc">Giá giảm dần</option>
+        <option value="name_asc">Tên A-Z</option>
+        <option value="name_desc">Tên Z-A</option>
+      </select>
+      <!-- Nút tìm kiếm -->
     <button onclick="searchProducts()">Tìm kiếm</button>
   </div>
      <div id="noProductsMessage" style="display: none; color: red;">Không có sản phẩm phù hợp với từ khóa tìm kiếm.</div>
@@ -92,6 +98,8 @@
      <div id="pagination" class="pagination"></div>
   </div>
 </main>
+<!-- Modal đăng nhập và đăng ký -->
+  <div id="modalOverlay" class="modal-overlay" onclick="toggleModal(false)"></div>
  <div id="loginModal" class="modal">
     <div class="modal-content">
       <div class="tabs">
@@ -102,14 +110,14 @@
   <h2>Đăng nhập</h2>
   <input type="text" id="login-username" placeholder="Nhập email của bạn">
   <input type="password" id="login-password" placeholder="Mật khẩu">
-  <button onclick="login()">Đăng nhập</button>
+    <button onclick="login()">Đăng nhập</button>
 </div>
 <div id="registerForm" style="display: none;">
   <h2>Đăng ký</h2>
   <input type="text" id="registerUsername" placeholder="Thông tin người dùng">
   <input type="email" id="registerEmail" placeholder="Email">
   <input type="password" id="registerPassword" placeholder="Mật khẩu">
-  <button onclick="register()">Đăng ký</button>
+    <button onclick="register()">Đăng ký</button>
 </div>
     </div>
   </div>
@@ -125,18 +133,19 @@
     </div>
   </div>
 </div>
-
+<!--feedback-->
 <h2>Đánh giá của khách hàng</h2>
 <div class="feedback-wrapper">
-  <div id="feedbackList">
-  </div>
   <form id="feedbackForm">
     <input type="text" name="name" placeholder="Tên của bạn" required />
     <textarea name="content" placeholder="Hãy gửi ý kiến phản hồi của bạn..." required></textarea>
     <button type="submit">Gửi đánh giá</button>
     <div id="feedbackMessage"></div>
+    <div id="feedbackList"></div>
   </form>
 </div>
+</div>
+<!-- Footer -->
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-col">
@@ -153,8 +162,9 @@
       <h3>Liên hệ</h3>
       <div class="contact-item">
         <i class="fas fa-map-marker-alt"></i>
-        <a href="#">123 Đường ABC, TP.HÀ NỘi</a>
+        <a href="https://maps.app.goo.gl/v5Hjq67FGXrHX6j78" target="_blank">123 Đường ABC, TP.HÀ NỘi</a>
       </div>
+
       <div class="contact-item">
         <i class="fas fa-phone"></i>
         <a href="tel:0987123456">0987123456</a>
@@ -184,9 +194,6 @@
     <p>&copy; 2025 Thanh Tra Tea. All Rights Reserved.</p>
   </div>
 </footer>
-<!-- thong bao them gio hang thanh cong -->
-<div id="toast" class="toast">Đã thêm vào giỏ hàng!</div>
-  <div id="modal-container"></div>
   <script src="js/main.js"></script>
   <script src="js/script.js"></script>
 </body>

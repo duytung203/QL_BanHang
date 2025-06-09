@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetchProductDetail(productId);
 });
-
+// Hàm lấy chi tiết sản phẩm từ API
 async function fetchProductDetail(id) {
   try {
     const response = await fetch(`/api/products/${id}`);
@@ -30,7 +30,7 @@ async function fetchProductDetail(id) {
     showError(error.message);
   }
 }
-
+// Hàm hiển thị chi tiết sản phẩm
 function renderProduct(product) {
   const productContainer = document.getElementById("product-detail");
 
@@ -113,8 +113,15 @@ function renderProduct(product) {
   `;
 
   let selectedProduct = null;
-
+  // Kiểm tra xem người dùng đã đăng nhập hay chưa
   document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("add-to-cart-btn")) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      window.location.href = "index.html";
+      return;
+    }}
     if (e.target.classList.contains("add-to-cart-btn")) {
       selectedProduct = {
         id: product.id,
@@ -125,7 +132,7 @@ function renderProduct(product) {
       document.getElementById("quantityModal").style.display = "flex";
     }
   });
-
+// Xử lý sự kiện khi người dùng nhấn nút "Thêm vào giỏ hàng"
   document.getElementById("confirmAdd").addEventListener("click", () => {
     const quantity = parseInt(document.getElementById("quantityInput").value);
     if (quantity <= 0) {
@@ -153,7 +160,7 @@ function renderProduct(product) {
     document.getElementById("quantityModal").style.display = "none";
   });
 }
-
+// Hiển thị thông báo lỗi
 function showError(message) {
   document.getElementById("product-detail").innerHTML = `
     <div class="error-message">
@@ -170,7 +177,7 @@ function formatPrice(price) {
     currency: 'VND'
   }).format(price);
 }
-
+// san phẩm liên quan
 async function loadRelatedProducts(id) {
   try {
     const response = await fetch(`/api/products/${id}/related`);

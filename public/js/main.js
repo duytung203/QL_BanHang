@@ -1,4 +1,4 @@
-
+// xử lý các tương tác menu
 document.addEventListener('DOMContentLoaded', function () {
   const coffeeBtn = document.getElementById('menu-coffee');
   if (coffeeBtn) {
@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
       handleCategoryClick('tea');
     });
   }
+ const allBtn = document.getElementById('menu-all');
+if (allBtn) {
+  allBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    window.location.href = 'index.html';
+  });
+}
 
   const banhBtn = document.getElementById('menu-banh');
   if (banhBtn) {
@@ -32,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
-
+// Hàm xử lý khi người dùng click vào một danh mục
 function handleCategoryClick(category) {
   window.location.href = `index.html?category=${category}`;
 }

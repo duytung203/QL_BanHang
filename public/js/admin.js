@@ -1,4 +1,4 @@
-
+// Quản lý người dùng
 async function loadUsers() {
   const res = await fetch('/api/user');
   const users = await res.json();
@@ -17,7 +17,7 @@ async function loadUsers() {
       </tr>`;
   });
 }
-
+// Tạo người dùng mới
 async function createUser() {
   const username = document.getElementById('username').value;
   const email = document.getElementById('email').value;
@@ -34,7 +34,7 @@ async function createUser() {
   alert(data.message);
   loadUsers();
 }
-
+// Xoá người dùng
 async function deleteUser(id) {
   if (!confirm('Bạn chắc chắn muốn xoá?')) return;
   const res = await fetch(`/api/user/${id}`, { method: 'DELETE' });
@@ -42,7 +42,7 @@ async function deleteUser(id) {
   alert(data.message);
   loadUsers();
 }
-
+// Reset mật khẩu người dùng
 async function resetPassword(id) {
   const res = await fetch(`/api/user/${id}/reset`, { method: 'PUT' });
   const data = await res.json();
@@ -57,7 +57,8 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('role');
   window.location.href = 'index.html';
 });
-
+// Quản lý sản phẩm
+// Tạo sản phẩm mới
 const createProduct = async () => {
   const data = {
     name: document.querySelector('[name="name"]').value,
@@ -116,7 +117,7 @@ function loadProducts() {
 }
 
 let currentEditingId = null;
-
+// Mở modal chỉnh sửa sản phẩm
 function openEditModal(product) {
   currentEditingId = product.id;
   document.getElementById('editName').value = product.name;
@@ -126,11 +127,11 @@ function openEditModal(product) {
   document.getElementById('editMota').value = product.mota;
   document.getElementById('editModal').style.display = 'block';
 }
-
+// Đóng modal chỉnh sửa sản phẩm
 function closeEditModal() {
   document.getElementById('editModal').style.display = 'none';
 }
-
+// Cập nhật sản phẩm
 async function UpdateProduct(id) {
   try {
     const res = await fetch('/api/products');
@@ -145,6 +146,7 @@ async function UpdateProduct(id) {
     console.error('Lỗi khi lấy thông tin sản phẩm:', err);
   }
 }
+// Xử lý sự kiện khi người dùng nhấn nút "Cập nhật" sản phẩm
 async function submitUpdate() {
   const name = document.getElementById('editName').value;
   const price = document.getElementById('editPrice').value;
@@ -201,14 +203,17 @@ async function deleteProduct(id) {
 }
 
 loadProducts();
-
+// Quản lý đơn hàng
 function showSection(sectionId) {
     document.getElementById('userSection').style.display = 'none';
     document.getElementById('productSection').style.display = 'none';
     document.getElementById('orderSection').style.display = 'none';
     document.getElementById(sectionId).style.display = 'block';
   }
-
+  window.onload = () => {
+    showSection('userSection');
+  };
+  // Hàm load danh sách đơn hàng
 async function loadOrders() {
   const res = await fetch('/api/cart/admin/orders');
   const data = await res.json();
@@ -241,6 +246,7 @@ async function loadOrders() {
     tbody.innerHTML = '<tr><td colspan="5">Không có đơn hàng nào.</td></tr>';
   }
 }
+// Hàm cập nhật trạng thái đơn hàng
 async function updateOrderStatus(orderId, status) {
   try {
     const response = await fetch(`/api/cart/orders/${orderId}`, {
@@ -263,7 +269,7 @@ async function updateOrderStatus(orderId, status) {
     alert('Có lỗi xảy ra khi cập nhật trạng thái');
   }
 }
-
+// Hàm xóa đơn hàng
 async function deleteOrder(orderId) {
   if (!confirm('Bạn có chắc muốn xóa đơn hàng này?')) return;
 

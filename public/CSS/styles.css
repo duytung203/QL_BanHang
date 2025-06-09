@@ -9,6 +9,11 @@ body {
   color: #333;
   line-height: 1.6;
 }
+.wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
 .main-header {
    background-color: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -86,8 +91,8 @@ body {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #fff;
-  width: 200px;
+  background-color: #ffffff;
+  width: 250px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   opacity: 0;
   visibility: hidden;
@@ -95,7 +100,7 @@ body {
   transition: all 0.3s;
   z-index: 100;
   border-radius: 5px;
-  padding: 10px 0;
+  padding: 10px 10px;
 }
 
 .menuchinh:hover .menuphu {
@@ -116,7 +121,7 @@ body {
 }
 
 .menuphu a:hover {
-  background-color: #f5f5f5;
+  background-color: #5ac56c;
 }
 
 #userMenu {
@@ -775,77 +780,64 @@ button[onclick="register()"]:hover {
 }
 
 .banner-container {
-  max-width: 100%;
   position: relative;
-  margin: auto;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 8px;
+  width: 100%;
+  height: 400px;
 }
 
 .banner-slide {
-  display: none;
+  position: absolute;
   width: 100%;
-  position: relative;
+  height: 100%;
+  opacity: 0;
+  left: 100%;
+  transition: all 0.5s ease-in-out;
 }
 
 .banner-slide img {
   width: 100%;
-  height: auto;
-  max-height: 450px;
+  height: 100%;
   object-fit: cover;
+}
+
+.banner-slide.active {
+  left: 0;
+  opacity: 1;
+  z-index: 2;
 }
 
 .banner-text {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  color: rgb(3, 3, 3);
-  padding: 40px;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
+  color: rgb(0, 0, 0);
+  padding: 0;
+  background: none;
+  border: none;
 }
-
-.banner-text h3 {
-  margin: 0;
-  font-size: 1.5em;
-  color: #000000;
-}
-
-.banner-text p {
-  margin: 5px 0 0;
-  font-size: 1em;
-}
-
-.banner-text small {
-  font-size: 0.8em;
-  display: block;
-  margin-top: 5px;
-}
-
 
 .banner-dots {
-  text-align: center;
-  padding: 1px;
   position: absolute;
   bottom: 10px;
-  left: 0;
-  right: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .dot {
-  cursor: pointer;
-  height: 10px;
-  width: 10px;
-  margin: 0 5px;
-  background-color: #bbb;
-  border-radius: 50%;
   display: inline-block;
-  transition: background-color 0.6s ease;
+  width: 5px;
+  height: 5px;
+  margin: 0 4px;
+  background-color: #ccc;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
-.active, .dot:hover {
-  background-color: #2a5a3b;
+.dot.active {
+  background-color: #208035;
 }
 
 .fade {
@@ -880,151 +872,84 @@ button[onclick="register()"]:hover {
 
 
 .feedback-wrapper {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 40px auto;
-  padding: 0 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-
-.feedback-wrapper h2 {
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 30px;
-  font-size: 28px;
-  position: relative;
-  padding-bottom: 15px;
-}
-
-.feedback-wrapper h2::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 3px;
-  background-color: #1e882c;
-}
-
-#feedbackList {
-  margin-bottom: 40px;
-}
-
-.feedback-item {
+  padding: 24px;
   background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  margin-bottom: 20px;
-  border-left: 4px solid #2fda4b;
-}
-
-.feedback-author {
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-}
-
-.feedback-author::before {
-  content: '👤';
-  margin-right: 8px;
-}
-
-.feedback-content {
-  color: #34495e;
-  line-height: 1.6;
-}
-
-.feedback-date {
-  font-size: 12px;
-  color: #7f8c8d;
-  margin-top: 10px;
-  text-align: right;
-  font-style: italic;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
 }
 
 #feedbackForm {
-  background-color: #f8f9fa;
-  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#feedbackForm input,
+#feedbackForm textarea {
+  padding: 12px 16px;
+  border: 1px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-}
-
-#feedbackForm input[type="text"],
-#feedbackForm textarea {
-  width: 100%;
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
   font-size: 16px;
-  transition: all 0.3s;
-  box-sizing: border-box;
-}
-
-#feedbackForm input[type="text"]:focus,
-#feedbackForm textarea:focus {
-  border-color: #3498db;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-}
-
-#feedbackForm textarea {
-  min-height: 150px;
   resize: vertical;
+  transition: border-color 0.2s;
 }
 
-#feedbackForm button[type="submit"] {
-  background-color: #3498db;
+#feedbackForm input:focus,
+#feedbackForm textarea:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+#feedbackForm button {
+  background-color: #4caf50;
   color: white;
   border: none;
-  padding: 12px 25px;
+  padding: 12px;
   font-size: 16px;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s;
-  font-weight: 600;
-  display: block;
-  width: 100%;
+  transition: background-color 0.2s;
 }
 
-#feedbackForm button[type="submit"]:hover {
-  background-color: #1c883c;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(41, 185, 77, 0.3);
-}
-
-#feedbackForm button[type="submit"]:active {
-  transform: translateY(0);
+#feedbackForm button:hover {
+  background-color: #45a049;
 }
 
 #feedbackMessage {
-  margin-top: 15px;
-  padding: 12px;
-  border-radius: 6px;
+  margin-top: 8px;
+  color: #4caf50;
+  font-weight: bold;
   text-align: center;
-  font-size: 14px;
-  opacity: 0;
-  transition: opacity 0.3s;
 }
 
-#feedbackMessage.success {
-  background-color: #d4edda;
-  color: #155724;
-  opacity: 1;
+#feedbackList {
+  margin-top: 24px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
 }
 
-#feedbackMessage.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  opacity: 1;
+.feedback-item {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  border-left: 4px solid #4caf50;
 }
 
-::placeholder {
-  color: #95a5a6;
-  opacity: 1;
+.feedback-item h4 {
+  margin: 0 0 6px;
+  color: #333;
+  font-size: 16px;
 }
+
+.feedback-item p {
+  margin: 0;
+  color: #555;
+  font-size: 15px;
+}
+
 

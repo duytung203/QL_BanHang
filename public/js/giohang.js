@@ -1,5 +1,5 @@
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
+// Hàm hiển thị giỏ hàng
 function renderCart() {
   const tbody = document.getElementById('cart-body');
   tbody.innerHTML = '';
@@ -24,22 +24,22 @@ function renderCart() {
 
   document.getElementById('total-price').textContent = total;
 }
-
+// Hàm cập nhật số lượng sản phẩm trong giỏ hàng
 function updateQuantity(index, quantity) {
   cart[index].quantity = parseInt(quantity);
   saveCart();
 }
-
+// Hàm xoá sản phẩm khỏi giỏ hàng
 function removeItem(index) {
   cart.splice(index, 1);
   saveCart();
 }
-
+// Hàm lưu giỏ hàng vào localStorage và cập nhật giao diện
 function saveCart() {
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
-
+// Hàm xử lý sự kiện khi người dùng nhấn nút "Thanh toán"
 function checkout() {
   if (!cart || cart.length === 0) {
     alert("Giỏ hàng đang trống!");
@@ -68,7 +68,7 @@ function checkout() {
   });
 }
 
-
+// Hiển thị giỏ hàng khi trang được tải
 document.addEventListener('DOMContentLoaded', () => {
   fetch('/api/cart/my-orders', {
     method: 'GET',
@@ -101,16 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
         itemsList.classList.add('items-list');
         
         let orderTotal = 0;
-        
         order.items.forEach(item => {
           const itemElement = document.createElement('div');
           itemElement.classList.add('item');
-          
           const itemPrice = item.price || 0;
           const itemQuantity = item.quantity || 1;
           const itemTotal = itemPrice * itemQuantity;
           orderTotal += itemTotal;
-                    
+        
           itemElement.innerHTML = `
             <img src="${item.image || '/images/placeholder-product.png'}" alt="${item.name || 'Sản phẩm'}">
             <div class="item-name">${item.name || 'Không có tên'}</div>
@@ -118,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="item-price">${itemPrice.toLocaleString('vi-VN')} VND</div>
             <div class="item-total">Thành tiền: ${itemTotal.toLocaleString('vi-VN')} VND</div>
           `;
-          
+          //
           itemsList.appendChild(itemElement);
         });
 
@@ -139,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
           payButton.textContent = order.status === 'completed' ? 'Đã thanh toán' : 'Đã hủy';
           payButton.classList.add('disabled-button');
         }
-        
+
         orderFooter.innerHTML = `
           <div class="total-section">
             Tổng cộng: 
@@ -163,31 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // Hàm xử lý thanh toán
 function handlePayment(orderId, amount) {
   if (confirm(`Bạn có chắc chắn muốn thanh toán đơn hàng #${orderId} với số tiền ${amount.toLocaleString('vi-VN')} VND?`)) {
-    fetch('/api/payment/process', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-       'Authorization': 'Bearer ' + localStorage.getItem('token')
-      },
-      body: JSON.stringify({
-        order_id: orderId,
-        amount: amount
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
+    console.log('Đang xử lý thanh toán ...');
+    setTimeout(() => {
+      const success = Math.random() < 0.9;
+      if (success) {
         alert('Thanh toán thành công!');
+  
         location.reload();
       } else {
-        alert('Thanh toán thất bại: ' + (data.message || 'Lỗi không xác định'));
+        alert('Thanh toán thất bại! Vui lòng thử lại.');
       }
-    })
-    .catch(error => {
-      console.error('Lỗi:', error);
-      alert('Có lỗi xảy ra khi thanh toán: ' + error.message);
-    });
+    }, 1000);
   }
 }
+
 
 window.onload = renderCart;

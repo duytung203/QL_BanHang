@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-
+// Middleware để xác thực người dùng
 const authenticate = (req, res, next) => {
   if (!req.session || !req.session.user) {
     return res.status(401).json({ error: 'Bạn cần đăng nhập để thực hiện hành động này' });
@@ -9,7 +9,7 @@ const authenticate = (req, res, next) => {
   req.user = req.session.user;
   next();
 };
-
+// Lấy giỏ hàng của người dùng
 router.post('/checkout', async (req, res) => {
   try {
     const { cart } = req.body;
@@ -111,7 +111,7 @@ router.get('/admin/orders', authenticate, async (req, res) => {
     res.status(500).json({ error: 'Lỗi khi lấy đơn hàng', detail: err.message });
   }
 });
-
+// Cập nhật trạng thái đơn hàng
 router.put('/orders/:id', (req, res) => {
   const orderId = req.params.id;
   const { status } = req.body;
@@ -129,7 +129,7 @@ router.put('/orders/:id', (req, res) => {
     res.json({ id: orderId, status });
   });
 });
-
+// Xoá đơn hàng
 router.delete('/orders/:id', async (req, res) => {
   const { id } = req.params;
   try {

@@ -1,5 +1,5 @@
 let originalValues = {};
-
+// Hàm mở modal chỉnh sửa thông tin người dùng
 function editField(fieldName) {
   const displayElement = document.getElementById(`${fieldName}-display`);
   originalValues[fieldName] = displayElement.textContent;
@@ -10,7 +10,7 @@ function editField(fieldName) {
   document.getElementById(`cancel-${fieldName}`).style.display = 'inline-block';
   event.target.style.display = 'none';
 }
-
+// Hàm lưu thông tin đã chỉnh sửa
 function cancelEdit(fieldName) {
   document.getElementById(`${fieldName}-display`).textContent = originalValues[fieldName];
   document.getElementById(`${fieldName}-display`).style.display = 'inline';
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadUserInfo();
   document.getElementById("change-password")?.addEventListener("click", handleChangePassword);
 });
-
+// Hàm load thông tin người dùng
 async function loadUserInfo() {
   try {
     const response = await fetch("/api/user/info", { credentials: "include" });
@@ -39,7 +39,7 @@ async function loadUserInfo() {
     alert("Lỗi khi tải thông tin người dùng");
   }
 }
-
+// Hàm lưu thông tin người dùng
 async function saveField(field) {
   const input = document.getElementById(`${field}-input`);
   const value = input.value.trim();
@@ -69,7 +69,7 @@ async function saveField(field) {
 
 
 
-
+// Hàm xử lý sự kiện khi người dùng đổi mật khẩu
 async function handleChangePassword() {
   try {
     const oldPassword = await showPasswordForm("Nhập mật khẩu cũ:");
@@ -94,7 +94,7 @@ async function handleChangePassword() {
   }
 }
 
-
+// Hàm hiển thị form nhập mật khẩu
 function showPasswordForm(title) {
   return new Promise((resolve) => {
     if (document.querySelector(".password-form")) return;
