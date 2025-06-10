@@ -7,6 +7,7 @@ async function loadUsers() {
   users.forEach(u => {
     tbody.innerHTML += `
       <tr>
+        <td>${u.id}</td>
         <td>${u.username}</td>
         <td>${u.email}</td>
         <td>${u.role}</td>
@@ -103,6 +104,7 @@ function loadProducts() {
       products.forEach((p, index) => {
         tbody.innerHTML += `
           <tr>
+            <td>${p.id}</td>
             <td><img src="${p.image}" style="width:50px;"></td>
             <td>${p.name}</td>
             <td>${p.price}</td>
@@ -114,6 +116,10 @@ function loadProducts() {
         `;
       });
     });
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
 }
 
 let currentEditingId = null;
@@ -146,7 +152,7 @@ async function UpdateProduct(id) {
     console.error('Lỗi khi lấy thông tin sản phẩm:', err);
   }
 }
-// Xử lý sự kiện khi người dùng nhấn nút "Cập nhật" sản phẩm
+// Xử lý sự kiện khi  dùng nhấn nút "Cập nhật" sản phẩm
 async function submitUpdate() {
   const name = document.getElementById('editName').value;
   const price = document.getElementById('editPrice').value;
@@ -208,6 +214,7 @@ function showSection(sectionId) {
     document.getElementById('userSection').style.display = 'none';
     document.getElementById('productSection').style.display = 'none';
     document.getElementById('orderSection').style.display = 'none';
+    document.getElementById('promotionSection').style.display = 'none';
     document.getElementById(sectionId).style.display = 'block';
   }
   window.onload = () => {
@@ -295,6 +302,63 @@ async function deleteOrder(orderId) {
 document.addEventListener('DOMContentLoaded', function() {
   loadOrders();
 });
+
+// Quản lý khuyến mãi
+document.addEventListener("DOMContentLoaded", function () {
+  const promotionForm = document.getElementById("promotionForm");
+  const promotionTableBody = document.getElementById("promotionTableBody");
+
+  let promotions = [];
+
+  // Hàm render bảng khuyến mãi
+  function renderPromotions() {
+    promotionTableBody.innerHTML = "";
+    promotions.forEach((promo, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${promo.product_id}</td>
+        <td>${promo.discount_percent}%</td>
+        <td>${promo.start_date}</td>
+        <td>${promo.end_date}</td>
+        <td>
+          <button onclick="deletePromotion(${index})">Xoá</button>
+        </td>
+      `;
+      promotionTableBody.appendChild(row);
+    });
+  }
+
+  // Xử lý submit form
+  promotionForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(promotionForm);
+    const newPromotion = {
+      product_id: formData.get("product_id"),
+      discount_percent: formData.get("discount_percent"),
+      start_date: formData.get("start_date"),
+      end_date: formData.get("end_date"),
+    };
+
+    // Validate ngày bắt đầu <= ngày kết thúc
+    if (new Date(newPromotion.start_date) > new Date(newPromotion.end_date)) {
+      alert("Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.");
+      return;
+    }
+
+    promotions.push(newPromotion);
+    renderPromotions();
+    promotionForm.reset();
+  });
+
+  // Xoá khuyến mãi
+  window.deletePromotion = function (index) {
+    if (confirm("Bạn có chắc chắn muốn xoá khuyến mãi này?")) {
+      promotions.splice(index, 1);
+      renderPromotions();
+    }
+  };
+});
+
 
 
 

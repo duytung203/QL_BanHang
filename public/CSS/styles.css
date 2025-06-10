@@ -952,4 +952,66 @@ button[onclick="register()"]:hover {
   font-size: 15px;
 }
 
+#featured-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+.product-featured {
+  width: 220px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.product-featured img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+
+.product-featured h3 {
+  font-size: 18px;
+  margin: 12px 0 4px;
+  color: #333;
+}
+
+.product-featured p {
+  font-size: 16px;
+  color: #ff6600;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+/* Hover effect */
+.product-featured:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.product-featured.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#cursor-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  
+}
+
+
 

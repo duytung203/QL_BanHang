@@ -3,6 +3,39 @@ const router = express.Router();
 const db = require('../db');
 const app = express(); 
 
+// Route lấy sản phẩm nổi bật (featured)
+router.get('/featured', (req, res) => {
+    db.query('SELECT * FROM products WHERE is_featured = 1', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Server error' });
+        }
+        res.json(results);
+    });
+});
+
+// Route lấy tất cả khuyến mãi (promotions)
+router.get('/promotions', (req, res) => {
+    const today = new Date().toISOString().split('T')[0];
+
+    const query = `
+        SELECT p.*, pr.discount_percent, 
+               ROUND(p.price * (100 - pr.discount_percent) / 100, 2) AS discounted_price
+        FROM products p 
+        JOIN promotions pr ON p.id = pr.product_id 
+        WHERE pr.start_date <= ? AND pr.end_date >= ?
+    `;
+
+    db.query(query, [today, today], (err, results) => {
+        if (err) {
+            console.error('Lỗi truy vấn khuyến mãi:', err);
+            return res.status(400).json({ error: err.message });
+        }
+        res.json({ data: results });
+    });
+});
+
+
 //lay tat ca san pham
 router.get('/', (req, res) => {
   db.query('SELECT * FROM products', (err, results) => {
@@ -152,7 +185,5 @@ router.put('/:id', (req, res) => {
     res.json({ message: 'Cập nhật sản phẩm thành công' });
   });
 });
-
-
 module.exports = router;
 

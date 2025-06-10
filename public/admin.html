@@ -18,6 +18,7 @@
       <li><a onclick="showSection('userSection')">Quản lý người dùng</a></li>
       <li><a onclick="showSection('productSection')">Quản lý sản phẩm</a></li>
       <li><a onclick="showSection('orderSection')">Quản lý đơn hàng</a></li>
+      <li><a onclick="showSection('promotionSection')">Quản lý khuyến mãi</a></li>
       <li><a href="#">Thống kê</a></li>
       <li><a href="#" id="logoutBtn">Đăng xuất</a></li>
     </ul>
@@ -40,6 +41,7 @@
     <table id="userTable">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Tên người dùng</th>
           <th>Email</th>
           <th>Vai trò</th>
@@ -73,6 +75,7 @@
     <table id="productTable">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Ảnh</th>
           <th>Tên</th>
           <th>Giá</th>
@@ -127,7 +130,34 @@
       </div>
     </div>
   </main>
-
+    <!-- Nội dung quản lý khuyến mãi -->
+  <div id="promotionSection" style="display: none;">
+    <h1>Quản lý khuyến mãi</h1>
+    <h2>Thêm khuyến mãi</h2>
+    <form id="promotionForm">
+      <input type="number" name="product_id" placeholder="ID sản phẩm" required />
+      <input type="number" name="discount_percent" placeholder="Giảm (%)" required />
+      <input type="date" name="start_date" required />
+      <input type="date" name="end_date" required />
+      <button type="submit">Thêm khuyến mãi</button>
+    </form>
+    <div class="scrollable-table">
+      <table id="promotionTable">
+        <thead>
+          <tr>
+            <th>ID sản phẩm</th>
+            <th>Giảm giá (%)</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="promotionTableBody">
+          <!-- dữ liệu thêm bằng JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
   <script src="js/admin.js"></script>
 </body>
 </html>

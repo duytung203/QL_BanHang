@@ -182,15 +182,6 @@ function toggleModal(show) {
   document.getElementById('loginModal').style.display = show ? 'flex' : 'none';
 }
 
-fetch('index.html')
-  .then(response => response.text())
-  .then(htmlString => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
-    const modal = doc.querySelector('.modal'); 
-    document.getElementById('modal-container').appendChild(modal);
-  });         
-
 // Xử lý sự kiện click bên ngoài modal để đóng modal
 window.onclick = function(event) {
   const loginModal = document.getElementById("loginModal");
@@ -343,10 +334,6 @@ function showSlides(index) {
 
   slides[slideIndex].classList.add("active");
   dots[slideIndex].classList.add("active");
-}
-// Hàm chuyển đến slide hiện tại hoặc tiếp theo
-function currentSlide(n) {
-  showSlides(n);
 }
 // Hàm chuyển đến slide tiếp theo hoặc trước đó
 function plusSlides(n) {
@@ -537,6 +524,62 @@ function searchProducts() {
       console.error('Lỗi tìm kiếm:', err.message);
     });
 }
+
+// Lấy sản phẩm nổi bật và hiển thị
+fetch('/api/products/featured')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('featured-list');
+    if (!Array.isArray(data)) {
+      console.error('Dữ liệu không hợp lệ:', data);
+      container.innerHTML = 'Không thể tải sản phẩm nổi bật.';
+      return;
+    }
+
+   data.forEach((p, index) => {
+  const div = document.createElement("div");
+  div.className = "product-featured";
+  div.innerHTML = `
+    <img src="${p.image}" />
+    <h3>${p.name}</h3>
+    <p>${p.price} VND</p>
+  `;
+  container.appendChild(div);
+
+  // Thêm animation sau mỗi 200ms
+  setTimeout(() => {
+    div.classList.add("show");
+  }, index * 150);
+});
+  })
+  .catch(err => {
+    console.error("Lỗi khi fetch featured products:", err);
+  });
+
+// Lấy sản phẩm khuyến mãi và hiển thị
+fetch('/api/products/promotions')
+  .then(res => res.json())
+  .then(result => {
+    const data = result.data || result; 
+    const promotionsEl = document.getElementById('promotion-list');
+
+    if (!Array.isArray(data) || data.length === 0) {
+      promotionsEl.innerText = 'Hiện tại không có sản phẩm khuyến mãi.';
+      return;
+    }
+
+    data.forEach(product => {
+      const item = document.createElement('div');
+      item.textContent = `${product.name} - Giá KM: ${product.discounted_price}`;
+      promotionsEl.appendChild(item);
+    });
+  })
+  .catch(err => {
+    const promotionsEl = document.getElementById('promotion-list');
+    if (promotionsEl) promotionsEl.innerText = 'Lỗi khi tải sản phẩm khuyến mãi.';
+    console.error('Lỗi khi gọi API khuyến mãi:', err);
+  });
+
 
 
 
