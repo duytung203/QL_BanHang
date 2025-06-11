@@ -111,53 +111,75 @@
     </div>
   </div>
 <!-- Modal chỉnh sửa thông tin sản phẩm -->
-    <div id="editModal">
-      <div>
-        <h3>Chỉnh sửa sản phẩm</h3>
-        <input type="text" id="editName" placeholder="Tên sản phẩm"><br><br>
-        <input type="number" id="editPrice" placeholder="Giá"><br><br>
-        <select id="editCategory">
-          <option value="">Chọn danh mục</option>
-          <option value="tea">Trà</option>
-          <option value="coffee">Cà phê</option>
-          <option value="banh">Bánh</option>
-          <option value="anvat">Ăn vặt</option>
-        </select><br><br>
-        <input type="text" id="editImage" placeholder="Link ảnh"><br><br>
-        <textarea id="editMota" placeholder="Mô tả sản phẩm"></textarea><br><br>
-        <button onclick="submitUpdate()">Lưu</button>
-        <button onclick="closeEditModal()">Hủy</button>
-      </div>
-    </div>
-  </main>
-    <!-- Nội dung quản lý khuyến mãi -->
+   <div id="editModal" style="display:none;">
+  <div>
+    <h3>Chỉnh sửa sản phẩm</h3>
+    
+    <input type="text" id="editName" placeholder="Tên sản phẩm"><br><br>
+    <input type="number" id="editPrice" placeholder="Giá"><br><br>
+
+    <select id="editCategory">
+      <option value="">Chọn danh mục</option>
+      <option value="tea">Trà</option>
+      <option value="coffee">Cà phê</option>
+      <option value="banh">Bánh</option>
+      <option value="anvat">Ăn vặt</option>
+    </select><br><br>
+
+    <input type="text" id="editImage" placeholder="Link ảnh"><br><br>
+    <textarea id="editMota" placeholder="Mô tả sản phẩm"></textarea><br><br>
+
+    <!-- Khuyến mãi -->
+    <h4>Thông tin khuyến mãi</h4>
+    <input type="number" id="editDiscount" placeholder="Phần trăm giảm giá (%)"><br><br>
+    <label for="editStartDate">Ngày bắt đầu:</label><br>
+    <input type="date" id="editStartDate"><br><br>
+    <label for="editEndDate">Ngày kết thúc:</label><br>
+    <input type="date" id="editEndDate"><br><br>
+
+    <!-- Nút điều khiển -->
+    <button onclick="submitUpdate()">Lưu</button>
+    <button onclick="closeEditModal()">Hủy</button>
+  </div>
+</div>
+  <!-- Nội dung quản lý khuyến mãi -->
   <div id="promotionSection" style="display: none;">
     <h1>Quản lý khuyến mãi</h1>
-    <h2>Thêm khuyến mãi</h2>
-    <form id="promotionForm">
-      <input type="number" name="product_id" placeholder="ID sản phẩm" required />
-      <input type="number" name="discount_percent" placeholder="Giảm (%)" required />
-      <input type="date" name="start_date" required />
-      <input type="date" name="end_date" required />
-      <button type="submit">Thêm khuyến mãi</button>
-    </form>
     <div class="scrollable-table">
       <table id="promotionTable">
         <thead>
           <tr>
-            <th>ID sản phẩm</th>
+            <th>ID Sản phẩm</th>
             <th>Giảm giá (%)</th>
             <th>Ngày bắt đầu</th>
             <th>Ngày kết thúc</th>
-            <th>Hành động</th>
+            <th>Cập nhật</th>
+            <th>Xóa</th>
           </tr>
         </thead>
-        <tbody id="promotionTableBody">
-          <!-- dữ liệu thêm bằng JS -->
-        </tbody>
+        <tbody id="promotionTableBody"></tbody>
       </table>
     </div>
+    <!--modal chỉnh sửa khuyến mãi-->
+    <div id="promotionEditModal" style="display:none;">
+  <div>
+    <h3>Chỉnh sửa khuyến mãi</h3>
+
+    <input type="hidden" id="editPromotionProductId">
+
+    <input type="number" id="editPromotionDiscount" placeholder="Giảm giá (%)"><br><br>
+
+    <label for="editPromotionStartDate">Ngày bắt đầu:</label><br>
+    <input type="date" id="editPromotionStartDate"><br><br>
+
+    <label for="editPromotionEndDate">Ngày kết thúc:</label><br>
+    <input type="date" id="editPromotionEndDate"><br><br>
+
+    <button onclick="submitPromotionUpdate()">Lưu</button>
+    <button onclick="closePromotionEditModal()">Hủy</button>
   </div>
+</div>
+
   <script src="js/admin.js"></script>
 </body>
 </html>

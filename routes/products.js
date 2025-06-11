@@ -20,7 +20,7 @@ router.get('/promotions', (req, res) => {
 
     const query = `
         SELECT p.*, pr.discount_percent, 
-               ROUND(p.price * (100 - pr.discount_percent) / 100, 2) AS discounted_price
+               ROUND(p.price * (100 - pr.discount_percent) / 100) AS discounted_price
         FROM products p 
         JOIN promotions pr ON p.id = pr.product_id 
         WHERE pr.start_date <= ? AND pr.end_date >= ?
@@ -35,6 +35,51 @@ router.get('/promotions', (req, res) => {
     });
 });
 
+// Lấy danh sách khuyến mãi 
+router.get('/khuyenmai', (req, res) => {
+  const sql = `
+    SELECT p.product_id, p.discount_percent, p.start_date, p.end_date, pr.name 
+    FROM promotions p 
+    JOIN products pr ON p.product_id = pr.id
+  `;
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Lỗi truy vấn:', err);
+      return res.status(500).json({ error: 'Lỗi server' });
+    }
+    res.json(results);
+  });
+});
+
+
+// Xoá khuyến mãi theo product_id
+router.delete('/promotions/:productId', (req, res) => {
+  const { productId } = req.params;
+  db.query('DELETE FROM promotions WHERE product_id = ?', [productId], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Xoá khuyến mãi thành công' });
+  });
+});
+//update khuyến mãi theo product_id
+router.put('/promotions/:productId', (req, res) => {
+  const { productId } = req.params;
+  const { discount_percent, start_date, end_date } = req.body;
+
+  if (!discount_percent || !start_date || !end_date) {
+    return res.status(400).json({ message: 'Thiếu thông tin khuyến mãi' });
+  }
+
+  const updatePromoSql = `
+    UPDATE promotions
+    SET discount_percent = ?, start_date = ?, end_date = ?
+    WHERE product_id = ?
+  `;
+  
+  db.query(updatePromoSql, [discount_percent, start_date, end_date, productId], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Cập nhật khuyến mãi thành công' });
+  });
+});
 
 //lay tat ca san pham
 router.get('/', (req, res) => {
@@ -176,14 +221,54 @@ router.delete('/:id', (req, res) => {
 
 // update san pham
 router.put('/:id', (req, res) => {
-  const { name, price, category, image, mota } = req.body;
+  const { name, price, category, image, mota, promotion } = req.body;
   const id = req.params.id;
-  const sql = 'UPDATE products SET name = ?, price = ?, category = ?, image = ?, mota = ? WHERE id = ?';
-  const values = [name, price, category, image, mota, id];
-  db.query(sql, values, (err, result) => {
+
+  const updateProductSql = 'UPDATE products SET name = ?, price = ?, category = ?, image = ?, mota = ? WHERE id = ?';
+  const productValues = [name, price, category, image, mota, id];
+
+  db.query(updateProductSql, productValues, (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'Cập nhật sản phẩm thành công' });
+
+    if (!promotion || !promotion.discount_percent || !promotion.start_date || !promotion.end_date) {
+      return res.json({ message: 'Cập nhật sản phẩm thành công (không có khuyến mãi)' });
+    }
+
+    const checkSql = 'SELECT * FROM promotions WHERE product_id = ?';
+    db.query(checkSql, [id], (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      const promoValues = [
+        promotion.discount_percent,
+        promotion.start_date,
+        promotion.end_date,
+        id
+      ];
+
+      if (rows.length > 0) {
+        const updatePromoSql = `
+          UPDATE promotions
+          SET discount_percent = ?, start_date = ?, end_date = ?
+          WHERE product_id = ?
+        `;
+        db.query(updatePromoSql, promoValues, (err2) => {
+          if (err2) return res.status(500).json({ error: err2.message });
+          return res.json({ message: 'Cập nhật sản phẩm và khuyến mãi thành công' });
+        });
+      } else {
+        const insertPromoSql = `
+          INSERT INTO promotions (discount_percent, start_date, end_date, product_id)
+          VALUES (?, ?, ?, ?)
+        `;
+        db.query(insertPromoSql, promoValues, (err3) => {
+          if (err3) return res.status(500).json({ error: err3.message });
+          return res.json({ message: 'Cập nhật sản phẩm và thêm khuyến mãi thành công' });
+        });
+      }
+    });
   });
 });
+
+
 module.exports = router;
 

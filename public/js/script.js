@@ -570,7 +570,7 @@ fetch('/api/products/promotions')
 
     data.forEach(product => {
       const item = document.createElement('div');
-      item.textContent = `${product.name} - Giá KM: ${product.discounted_price}`;
+      item.textContent = `${product.name} - Giá KM: ${product.discounted_price}` + ' VND';
       promotionsEl.appendChild(item);
     });
   })

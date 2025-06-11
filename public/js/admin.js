@@ -118,41 +118,55 @@ function loadProducts() {
     });
 }
 
-function closeEditModal() {
-  document.getElementById('editModal').style.display = 'none';
-}
 
 let currentEditingId = null;
+
 // Mở modal chỉnh sửa sản phẩm
 function openEditModal(product) {
   currentEditingId = product.id;
+
+  // Fill thông tin sản phẩm
   document.getElementById('editName').value = product.name;
   document.getElementById('editPrice').value = product.price;
   document.getElementById('editCategory').value = product.category;
   document.getElementById('editImage').value = product.image;
   document.getElementById('editMota').value = product.mota;
+
+  // Nếu có khuyến mãi thì fill luôn
+  if (product.promotion) {
+    document.getElementById('editDiscount').value = product.promotion.discount_percent || '';
+    document.getElementById('editStartDate').value = product.promotion.start_date || '';
+    document.getElementById('editEndDate').value = product.promotion.end_date || '';
+  } else {
+    document.getElementById('editDiscount').value = '';
+    document.getElementById('editStartDate').value = '';
+    document.getElementById('editEndDate').value = '';
+  }
+
   document.getElementById('editModal').style.display = 'block';
 }
+
 // Đóng modal chỉnh sửa sản phẩm
 function closeEditModal() {
   document.getElementById('editModal').style.display = 'none';
 }
-// Cập nhật sản phẩm
+
+// Gọi khi nhấn nút "Sửa"
 async function UpdateProduct(id) {
   try {
-    const res = await fetch('/api/products');
+    const res = await fetch('/api/products'); // Giả định route trả về danh sách sản phẩm cùng khuyến mãi
     const products = await res.json();
     const product = products.find(p => p.id === id);
 
     if (!product) return alert('Không tìm thấy sản phẩm');
-
     openEditModal(product);
 
   } catch (err) {
     console.error('Lỗi khi lấy thông tin sản phẩm:', err);
   }
 }
-// Xử lý sự kiện khi  dùng nhấn nút "Cập nhật" sản phẩm
+
+// Gửi request PUT để cập nhật
 async function submitUpdate() {
   const name = document.getElementById('editName').value;
   const price = document.getElementById('editPrice').value;
@@ -160,19 +174,44 @@ async function submitUpdate() {
   const image = document.getElementById('editImage').value;
   const mota = document.getElementById('editMota').value;
 
+  // Lấy thông tin khuyến mãi
+  const discount_percent = parseInt(document.getElementById('editDiscount').value) || null;
+  const start_date = document.getElementById('editStartDate').value || null;
+  const end_date = document.getElementById('editEndDate').value || null;
+// Kiểm tra tính hợp lệ của ngày
+    if (start_date && end_date) {
+    const start = new Date(start_date);
+    const end = new Date(end_date);
+    if (start >= end) {
+      alert(' Ngày bắt đầu phải nhỏ hơn ngày kết thúc.');
+      return;
+    }
+  }
+
+  const body = {
+    name,
+    price,
+    category,
+    image,
+    mota,
+    promotion: {
+      discount_percent,
+      start_date,
+      end_date
+    }
+  };
+
   try {
     const updateRes = await fetch(`/api/products/${currentEditingId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, price, category, image, mota })
+      body: JSON.stringify(body)
     });
 
-    if (!updateRes.ok) {
-      const error = await updateRes.json();
-      throw new Error(error.message || 'Cập nhật thất bại');
-    }
-
     const result = await updateRes.json();
+
+    if (!updateRes.ok) throw new Error(result.message || 'Cập nhật thất bại');
+
     alert(result.message);
     closeEditModal();
     loadProducts();
@@ -181,7 +220,6 @@ async function submitUpdate() {
     alert('Đã xảy ra lỗi khi cập nhật sản phẩm');
   }
 }
-
 
 
 
@@ -218,7 +256,7 @@ function showSection(sectionId) {
     document.getElementById(sectionId).style.display = 'block';
   }
   window.onload = () => {
-    showSection('userSection');
+    showSection('promotionSection');
   };
   // Hàm load danh sách đơn hàng
 async function loadOrders() {
@@ -302,66 +340,144 @@ async function deleteOrder(orderId) {
 document.addEventListener('DOMContentLoaded', function() {
   loadOrders();
 });
-
-// Quản lý khuyến mãi
-document.addEventListener("DOMContentLoaded", function () {
-  const promotionForm = document.getElementById("promotionForm");
-  const promotionTableBody = document.getElementById("promotionTableBody");
-
-  let promotions = [];
-
-  // Hàm render bảng khuyến mãi
-  function renderPromotions() {
-    promotionTableBody.innerHTML = "";
-    promotions.forEach((promo, index) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${promo.product_id}</td>
-        <td>${promo.discount_percent}%</td>
-        <td>${promo.start_date}</td>
-        <td>${promo.end_date}</td>
-        <td>
-          <button onclick="deletePromotion(${index})">Xoá</button>
-        </td>
-      `;
-      promotionTableBody.appendChild(row);
-    });
+// Hàm thêm hoặc cập nhật khuyến mãi cho sản phẩm
+function updateOrInsertPromotion(productId, promotion, callback) {
+  if (
+    promotion.discount_percent === undefined || promotion.discount_percent === null ||
+    !promotion.start_date ||
+    !promotion.end_date
+  ) {
+    return callback(null, 'Không có thông tin khuyến mãi hợp lệ');
   }
 
-  // Xử lý submit form
-  promotionForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const formData = new FormData(promotionForm);
-    const newPromotion = {
-      product_id: formData.get("product_id"),
-      discount_percent: formData.get("discount_percent"),
-      start_date: formData.get("start_date"),
-      end_date: formData.get("end_date"),
-    };
+  const checkSql = 'SELECT * FROM promotions WHERE product_id = ?';
+  db.query(checkSql, [productId], (err, rows) => {
+    if (err) return callback(err);
 
-    // Validate ngày bắt đầu <= ngày kết thúc
-    if (new Date(newPromotion.start_date) > new Date(newPromotion.end_date)) {
-      alert("Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.");
-      return;
+    const promoValues = [
+      promotion.discount_percent,
+      promotion.start_date,
+      promotion.end_date,
+      productId
+    ];
+
+    if (rows.length > 0) {
+      // Đã có khuyến mãi, update
+      const updateSql = `
+        UPDATE promotions
+        SET discount_percent = ?, start_date = ?, end_date = ?
+        WHERE product_id = ?
+      `;
+      db.query(updateSql, promoValues, (err2) => {
+        if (err2) return callback(err2);
+        return callback(null, 'Cập nhật khuyến mãi thành công');
+      });
+    } else {
+      // Chưa có, thêm mới
+      const insertSql = `
+        INSERT INTO promotions (discount_percent, start_date, end_date, product_id)
+        VALUES (?, ?, ?, ?)
+      `;
+      db.query(insertSql, promoValues, (err3) => {
+        if (err3) return callback(err3);
+        return callback(null, 'Thêm khuyến mãi thành công');
+      });
     }
-
-    promotions.push(newPromotion);
-    renderPromotions();
-    promotionForm.reset();
   });
+}
 
-  // Xoá khuyến mãi
-  window.deletePromotion = function (index) {
-    if (confirm("Bạn có chắc chắn muốn xoá khuyến mãi này?")) {
-      promotions.splice(index, 1);
-      renderPromotions();
-    }
-  };
+
+//load danh sách khuyến mãi
+async function loadPromotions() {
+  try {
+    const res = await fetch('/api/products/khuyenmai');
+    const promotions = await res.json();
+    const tbody = document.querySelector('#promotionTableBody');
+    tbody.innerHTML = '';
+    promotions.forEach(p => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${p.product_id}</td>
+          <td>${p.discount_percent}%</td>
+          <td>${new Date(p.start_date).toLocaleDateString()}</td>
+          <td>${new Date(p.end_date).toLocaleDateString()}</td>
+          <td><button onclick="updatePromotion(${p.product_id})">Cập nhật</button></td>
+          <td><button onclick="deletePromotion(${p.product_id})">Xoá</button></td>
+        </tr>`;
+    });
+  } catch (err) {
+    console.error('Lỗi loadPromotions:', err);
+  }
+}
+// Gọi loadPromotions sau khi DOM đã tải xong
+document.addEventListener('DOMContentLoaded', function() {
+  loadPromotions();
 });
 
+// Hàm xóa khuyến mãi
+async function deletePromotion(productId) {
+  if (!confirm(`Bạn có chắc chắn muốn xoá khuyến mãi cho sản phẩm ID ${productId}?`)) return;
+
+  try {
+    const res = await fetch(`/api/products/promotions/${productId}`, {
+      method: 'DELETE'
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert(data.message || 'Đã xoá khuyến mãi thành công');
+      loadPromotions(); // Refresh danh sách sau khi xoá
+    } else {
+      alert(data.error || 'Xoá thất bại');
+    }
+  } catch (err) {
+    console.error('Lỗi khi xoá khuyến mãi:', err);
+    alert('Lỗi kết nối tới server khi xoá khuyến mãi');
+  }
+}
+// Hàm mở modal chỉnh sửa khuyến mãi  
+function updatePromotion(productId, discount, startDate, endDate) {
+  document.getElementById('editPromotionProductId').value = productId;
+  document.getElementById('editPromotionDiscount').value = discount || '';
+  document.getElementById('editPromotionStartDate').value = startDate || '';
+  document.getElementById('editPromotionEndDate').value = endDate || '';
+
+  document.getElementById('promotionEditModal').style.display = 'block';
+}
+// Hàm cập nhật khuyến mãi
+function submitPromotionUpdate() {
+  const productId = document.getElementById('editPromotionProductId').value;
+  const discount = document.getElementById('editPromotionDiscount').value;
+  const startDate = document.getElementById('editPromotionStartDate').value;
+  const endDate = document.getElementById('editPromotionEndDate').value;
+
+  fetch(`/api/products/promotions/${productId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      discount,
+      startDate,
+      endDate,
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert("Cập nhật khuyến mãi thành công!");
+      closePromotionEditModal();
+      loadPromotions();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Lỗi khi cập nhật khuyến mãi!");
+    });
+}
+// Hàm đóng modal chỉnh sửa khuyến mãi
+function closePromotionEditModal() {
+  document.getElementById('promotionEditModal').style.display = 'none';
+}
 
 
-
-
-
-
+ 
