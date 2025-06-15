@@ -19,11 +19,12 @@ router.get('/promotions', (req, res) => {
     const today = new Date().toISOString().split('T')[0];
 
     const query = `
-        SELECT p.*, pr.discount_percent, 
-               ROUND(p.price * (100 - pr.discount_percent) / 100) AS discounted_price
-        FROM products p 
-        JOIN promotions pr ON p.id = pr.product_id 
-        WHERE pr.start_date <= ? AND pr.end_date >= ?
+        SELECT p.*, 
+             p.price * (1 - pr.discount_percent / 100) AS discounted_price,
+             pr.discount_percent, pr.start_date, pr.end_date
+      FROM products p
+      JOIN promotions pr ON p.id = pr.product_id
+      WHERE CURDATE() BETWEEN pr.start_date AND pr.end_date
     `;
 
     db.query(query, [today, today], (err, results) => {
@@ -80,10 +81,22 @@ router.put('/promotions/:productId', (req, res) => {
     res.json({ message: 'Cập nhật khuyến mãi thành công' });
   });
 });
-
 //lay tat ca san pham
 router.get('/', (req, res) => {
-  db.query('SELECT * FROM products', (err, results) => {
+  const sql = `
+    SELECT 
+      p.*, 
+      pr.discount_percent, 
+      pr.start_date, 
+      pr.end_date,
+      ROUND(p.price * (1 - IFNULL(pr.discount_percent, 0)/100)) AS discounted_price
+    FROM products p
+    LEFT JOIN promotions pr 
+      ON p.id = pr.product_id 
+      AND CURDATE() BETWEEN pr.start_date AND pr.end_date
+  `;
+
+  db.query(sql, (err, results) => {
     if (err) {
       console.error('Lỗi truy vấn:', err);
       return res.status(500).json({ error: 'Lỗi server' });
@@ -91,10 +104,23 @@ router.get('/', (req, res) => {
     res.json(results);
   });
 });
+
+
 // tim kiem san pham
 router.get('/search', (req, res) => {
   const keyword = req.query.keyword || '';
-  const sql = "SELECT * FROM products WHERE name LIKE ?";
+  const sql = `
+    SELECT 
+      p.*, 
+      pr.discount_percent,
+      ROUND(p.price * (1 - pr.discount_percent / 100)) AS discounted_price
+    FROM products p
+    LEFT JOIN promotions pr 
+      ON p.id = pr.product_id 
+      AND pr.start_date <= CURDATE() 
+      AND pr.end_date >= CURDATE()
+    WHERE p.name LIKE ?
+  `;
   db.query(sql, [`%${keyword}%`], (err, results) => {
     if (err) {
       console.error('Lỗi truy vấn:', err);
@@ -103,6 +129,7 @@ router.get('/search', (req, res) => {
     res.json(results);
   });
 });
+
 // sap xep san pham
 router.get('/sort', (req, res) => {
   const sort = req.query.sort;

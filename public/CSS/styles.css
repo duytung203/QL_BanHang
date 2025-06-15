@@ -401,7 +401,7 @@ border-radius: 5px;
 }
 
 .pagination {
-  margin-top: 20px;
+  margin-top: 60px;
   text-align: center;
 }
 
@@ -960,6 +960,12 @@ button[onclick="register()"]:hover {
   justify-content: center;
   padding: 20px;
 }
+#promotion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
 
 .product-featured {
   width: 220px;
@@ -1013,6 +1019,7 @@ button[onclick="register()"]:hover {
   pointer-events: none;
   
 }
+
 
 
 

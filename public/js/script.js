@@ -2,17 +2,7 @@ let products = [];
 let currentProductList = [];
 let currentPage = 1;
 const productsPerPage = 15;
-// Lấy danh sách sản phẩm từ API và hiển thị
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const response = await fetch('/api/products');
-    const data = await response.json();
-    currentProductList = data;
-    renderProducts();
-  } catch (error) {
-    console.error("Lỗi khi tải sản phẩm:", error);
-  }
-});
+
 // Hàm hiển thị danh sách sản phẩm và phân trang
 function renderProducts(page = 1) {
   const container = document.getElementById("product-list");
@@ -29,7 +19,7 @@ function renderProducts(page = 1) {
   pageProducts.forEach(product => {
     const card = document.createElement("div");
     card.className = "product-card";
-
+  
     const image = document.createElement("img");
     image.src = product.image;
     image.alt = product.name;
@@ -41,8 +31,17 @@ function renderProducts(page = 1) {
     title.style.cursor = "pointer";
     title.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
 
-    const price = document.createElement("p");
-    price.textContent = `Giá: ${product.price.toLocaleString()}đ`;
+    const price = document.createElement("div");
+
+    if (product.discount_percent) {
+    price.innerHTML = `
+    <p><del>Giá gốc: ${product.price.toLocaleString()}đ</del></p>
+    <p>Giảm giá: ${product.discount_percent}%</p>
+    <p><strong>Giá KM: ${product.discounted_price.toLocaleString()}đ</strong></p>`;
+    } 
+    else {
+    price.innerHTML = `<p><strong>Giá: ${product.price.toLocaleString()}đ</strong></p>`;
+    }
 
     const button = document.createElement("button");
     button.textContent = "Thêm vào giỏ";
@@ -480,49 +479,49 @@ window.addEventListener('DOMContentLoaded', loadFeedbacks);
 function searchProducts() {
   const sort = document.getElementById('sort').value;
 
-  fetch(`/api/products/sort?sort=${sort}`)
-    .then(res => res.json())
-    .then(data => {
-      if (!Array.isArray(data)) {
-        throw new Error(data.error || 'Lỗi không xác định từ server');
-      }
+fetch(`/api/products/sort?sort=${sort}`)
+  .then(res => res.json())
+  .then(data => {
+  if (!Array.isArray(data)) {
+    throw new Error(data.error || 'Lỗi không xác định từ server');
+  }
 
-      const container = document.getElementById('product-list');
-      container.innerHTML = '';
+  const container = document.getElementById('product-list');
+  container.innerHTML = '';
 
-      data.forEach(product => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
+  data.forEach(product => {
+  const card = document.createElement('div');
+  card.className = 'product-card';
 
-        const image = document.createElement('img');
-        image.src = `${product.image}`;
-        image.alt = product.name;
-        image.className = 'product-image';
-        image.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+  const image = document.createElement('img');
+  image.src = `${product.image}`;
+  image.alt = product.name;
+  image.className = 'product-image';
+  image.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
 
-        const title = document.createElement('h3');
-        title.textContent = product.name;
-        title.style.cursor = 'pointer';
-        title.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+  const title = document.createElement('h3');
+  title.textContent = product.name;
+  title.style.cursor = 'pointer';
+  title.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
 
-        const price = document.createElement('p');
-        price.textContent = `Giá: ${product.price.toLocaleString()}đ`;
+  const price = document.createElement('p');
+  price.textContent = `Giá: ${product.price.toLocaleString()}đ`;
 
-        const button = document.createElement('button');
-        button.textContent = 'Thêm vào giỏ';
-        button.addEventListener('click', () => showQuantityModal(product));
+  const button = document.createElement('button');
+  button.textContent = 'Thêm vào giỏ';
+  button.addEventListener('click', () => showQuantityModal(product));
 
-        card.appendChild(image);
-        card.appendChild(title);
-        card.appendChild(price);
-        card.appendChild(button);
+  card.appendChild(image);
+  card.appendChild(title);
+  card.appendChild(price);
+  card.appendChild(button);
 
-        container.appendChild(card);
-      });
-    })
-    .catch(err => {
-      console.error('Lỗi tìm kiếm:', err.message);
-    });
+  container.appendChild(card);
+ });
+})
+  .catch(err => {
+  console.error('Lỗi tìm kiếm:', err.message);
+ });
 }
 
 // Lấy sản phẩm nổi bật và hiển thị
@@ -556,30 +555,69 @@ fetch('/api/products/featured')
     console.error("Lỗi khi fetch featured products:", err);
   });
 
-// Lấy sản phẩm khuyến mãi và hiển thị
+  // Lấy sản phẩm khuyến mãi và hiển thị
 fetch('/api/products/promotions')
   .then(res => res.json())
   .then(result => {
     const data = result.data || result; 
     const promotionsEl = document.getElementById('promotion-list');
 
+    // Nếu không có sản phẩm khuyến mãi
     if (!Array.isArray(data) || data.length === 0) {
-      promotionsEl.innerText = 'Hiện tại không có sản phẩm khuyến mãi.';
+      promotionsEl.innerHTML = '<p>Hiện tại không có sản phẩm khuyến mãi.</p>';
       return;
     }
+    promotionsEl.innerHTML = '';
 
     data.forEach(product => {
-      const item = document.createElement('div');
-      item.textContent = `${product.name} - Giá KM: ${product.discounted_price}` + ' VND';
-      promotionsEl.appendChild(item);
-    });
+  const item = document.createElement('div');
+  item.className = 'product-card'; // giống class bên danh sách sản phẩm
+
+  const image = document.createElement('img');
+  image.src = product.image;
+  image.alt = product.name;
+  image.className = 'product-image';
+  image.style.cursor = 'pointer';
+  image.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+
+  const title = document.createElement('h3');
+  title.textContent = product.name;
+  title.style.cursor = 'pointer';
+  title.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+
+  const originalPrice = document.createElement('p');
+  originalPrice.innerHTML = `<del>Giá gốc: ${formatCurrency(product.price)}</del>`;
+
+  const discountPercent = document.createElement('p');
+  discountPercent.textContent = `Giảm giá: ${product.discount_percent}%`;
+
+  const discountedPrice = document.createElement('p');
+  discountedPrice.innerHTML = `<strong>Giá KM: ${formatCurrency(product.discounted_price)}</strong>`;
+
+  const button = document.createElement('button');
+  button.textContent = 'Thêm vào giỏ';
+  button.className = 'add-to-cart-btn';
+  button.addEventListener('click', () => showQuantityModal(product));
+
+  item.appendChild(image);
+  item.appendChild(title);
+  item.appendChild(originalPrice);
+  item.appendChild(discountPercent);
+  item.appendChild(discountedPrice);
+  item.appendChild(button);
+
+  promotionsEl.appendChild(item);
+});
   })
   .catch(err => {
     const promotionsEl = document.getElementById('promotion-list');
-    if (promotionsEl) promotionsEl.innerText = 'Lỗi khi tải sản phẩm khuyến mãi.';
+    if (promotionsEl) promotionsEl.innerHTML = '<p>Lỗi khi tải sản phẩm khuyến mãi.</p>';
     console.error('Lỗi khi gọi API khuyến mãi:', err);
   });
-
+// Hàm định dạng tiền tệ
+function formatCurrency(amount) {
+  return Number(amount).toLocaleString('vi-VN') + 'đ';
+}
 
 
 

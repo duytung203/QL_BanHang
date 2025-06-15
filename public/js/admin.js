@@ -96,7 +96,7 @@ const createProduct = async () => {
 
 // Load danh sách sản phẩm
 function loadProducts() {
-  fetch('/api/products')
+  fetch('/api/products')  
     .then(res => res.json())
     .then(products => {
       const tbody = document.querySelector('#productTable tbody');

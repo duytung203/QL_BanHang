@@ -28,6 +28,7 @@ app.use(session({
     maxAge: 3600000
   }
 }));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Thư mục chứa các tệp tĩnh như HTML, CSS, JS
 app.use('/api/products', productRoutes); // Đường dẫn API cho sản phẩm
