@@ -247,17 +247,29 @@ async function deleteProduct(id) {
 }
 
 loadProducts();
-// Quản lý đơn hàng
+// menu 
 function showSection(sectionId) {
-    document.getElementById('userSection').style.display = 'none';
-    document.getElementById('productSection').style.display = 'none';
-    document.getElementById('orderSection').style.display = 'none';
-    document.getElementById('promotionSection').style.display = 'none';
-    document.getElementById(sectionId).style.display = 'block';
+  const sections = ['userSection', 'productSection', 'orderSection', 'promotionSection', 'reportSection'];
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.style.display = 'block';
+    if (sectionId === 'reportSection') {
+      setTimeout(() => {
+        loadCharts(); 
+      }, 100); 
+    }
   }
-  window.onload = () => {
-    showSection('promotionSection');
-  };
+}
+window.onload = () => {
+  showSection('reportSection');
+};
+
   // Hàm load danh sách đơn hàng
 async function loadOrders() {
   const res = await fetch('/api/cart/admin/orders');
@@ -442,7 +454,6 @@ function updatePromotion(productId, discount, startDate, endDate) {
   document.getElementById('editPromotionDiscount').value = discount || '';
   document.getElementById('editPromotionStartDate').value = startDate || '';
   document.getElementById('editPromotionEndDate').value = endDate || '';
-
   document.getElementById('promotionEditModal').style.display = 'block';
 }
 // Hàm cập nhật khuyến mãi
@@ -480,4 +491,99 @@ function closePromotionEditModal() {
 }
 
 
- 
+
+async function fetchReportData(endpoint) {
+  try {
+    const response = await fetch(`/api/reports/${endpoint}`);
+    if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error(`Error loading ${endpoint}:`, error);
+    return [];
+  }
+}
+
+async function renderTopProductsChart() {
+  const canvas = document.getElementById('topProductsChart');
+  const ctx = canvas.getContext('2d');
+  Chart.getChart(canvas)?.destroy();
+
+  const data = await fetchReportData('top-products');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data.map(item => item.name),
+      datasets: [{
+        label: 'Số lượng đã bán',
+        data: data.map(item => parseInt(item.total_sold)),
+        backgroundColor: 'rgba(21, 199, 80, 0.81)'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: 'Top 5 sản phẩm bán chạy' } }
+    }
+  });
+}
+
+async function renderRevenueChart() {
+  const canvas = document.getElementById('revenueChart');
+  const ctx = canvas.getContext('2d');
+  Chart.getChart(canvas)?.destroy();
+
+  const data = await fetchReportData('revenue-daily');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(item => item.date),
+      datasets: [{
+        label: 'Doanh thu',
+        data: data.map(item => parseFloat(item.total_revenue)),
+        borderColor: 'rgb(97, 94, 102)',
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: 'Doanh thu 7 ngày gần nhất' } }
+    }
+  });
+}
+
+async function renderOrderStatusChart() {
+  const canvas = document.getElementById('orderStatusChart');
+  const ctx = canvas.getContext('2d');
+  Chart.getChart(canvas)?.destroy();
+
+  const data = await fetchReportData('order-status');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: data.map(item => item.status),
+      datasets: [{
+        label: 'Số đơn',
+        data: data.map(item => parseInt(item.count)),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)',
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: 'Tình trạng đơn hàng' } }
+    }
+  });
+}
+
+function loadCharts() {
+  renderTopProductsChart();
+  renderRevenueChart();
+  renderOrderStatusChart();
+  
+}
+
+
+

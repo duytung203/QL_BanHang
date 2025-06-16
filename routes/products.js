@@ -5,35 +5,43 @@ const app = express();
 
 // Route lấy sản phẩm nổi bật (featured)
 router.get('/featured', (req, res) => {
-    db.query('SELECT * FROM products WHERE is_featured = 1', (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Server error' });
-        }
-        res.json(results);
-    });
+     const sql = `
+    SELECT 
+  p.name, 
+  p.image, 
+  p.price,
+  SUM(od.quantity) AS total_sold
+FROM order_items od
+JOIN products p ON od.product_id = p.id
+GROUP BY p.id, p.name, p.image, p.price
+ORDER BY total_sold DESC
+LIMIT 5;
+  `;
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
 });
 
 // Route lấy tất cả khuyến mãi (promotions)
 router.get('/promotions', (req, res) => {
-    const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0];
+  const query = `
+    SELECT p.*, 
+      p.price * (1 - pr.discount_percent / 100) AS discounted_price,
+      pr.discount_percent, pr.start_date, pr.end_date
+    FROM products p
+    JOIN promotions pr ON p.id = pr.product_id
+    WHERE CURDATE() BETWEEN pr.start_date AND pr.end_date
+  `;
 
-    const query = `
-        SELECT p.*, 
-             p.price * (1 - pr.discount_percent / 100) AS discounted_price,
-             pr.discount_percent, pr.start_date, pr.end_date
-      FROM products p
-      JOIN promotions pr ON p.id = pr.product_id
-      WHERE CURDATE() BETWEEN pr.start_date AND pr.end_date
-    `;
-
-    db.query(query, [today, today], (err, results) => {
-        if (err) {
-            console.error('Lỗi truy vấn khuyến mãi:', err);
-            return res.status(400).json({ error: err.message });
-        }
-        res.json({ data: results });
-    });
+db.query(query, [today, today], (err, results) => {
+  if (err) {
+    console.error('Lỗi truy vấn khuyến mãi:', err);
+      return res.status(400).json({ error: err.message });
+    }
+  res.json({ data: results });
+  });
 });
 
 // Lấy danh sách khuyến mãi 
@@ -295,7 +303,5 @@ router.put('/:id', (req, res) => {
     });
   });
 });
-
-
 module.exports = router;
 

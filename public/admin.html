@@ -8,18 +8,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <!-- menu admin -->
   <aside class="sidebar">
     <h2>ADMIN THANHTRATEA</h2>
     <ul>
-      <li><a href="#">Trang Chủ</a></li>
+      <li><a onclick="showSection('reportSection')">Thống kê báo cáo</a></li>
       <li><a onclick="showSection('userSection')">Quản lý người dùng</a></li>
       <li><a onclick="showSection('productSection')">Quản lý sản phẩm</a></li>
       <li><a onclick="showSection('orderSection')">Quản lý đơn hàng</a></li>
       <li><a onclick="showSection('promotionSection')">Quản lý khuyến mãi</a></li>
-      <li><a href="#">Thống kê</a></li>
       <li><a href="#" id="logoutBtn">Đăng xuất</a></li>
     </ul>
   </aside>
@@ -116,7 +116,7 @@
     <h3>Chỉnh sửa sản phẩm</h3>
     
     <input type="text" id="editName" placeholder="Tên sản phẩm"><br><br>
-    <input type="number" id="editPrice" placeholder="Giá"><br><br>
+    <input type="number" id="editPrice" placeholder="Giá" ><br><br>
 
     <select id="editCategory">
       <option value="">Chọn danh mục</option>
@@ -137,7 +137,6 @@
     <label for="editEndDate">Ngày kết thúc:</label><br>
     <input type="date" id="editEndDate"><br><br>
 
-    <!-- Nút điều khiển -->
     <button onclick="submitUpdate()">Lưu</button>
     <button onclick="closeEditModal()">Hủy</button>
   </div>
@@ -164,22 +163,25 @@
     <div id="promotionEditModal" style="display:none;">
   <div>
     <h3>Chỉnh sửa khuyến mãi</h3>
-
     <input type="hidden" id="editPromotionProductId">
-
     <input type="number" id="editPromotionDiscount" placeholder="Giảm giá (%)"><br><br>
-
     <label for="editPromotionStartDate">Ngày bắt đầu:</label><br>
     <input type="date" id="editPromotionStartDate"><br><br>
-
     <label for="editPromotionEndDate">Ngày kết thúc:</label><br>
     <input type="date" id="editPromotionEndDate"><br><br>
 
     <button onclick="submitPromotionUpdate()">Lưu</button>
     <button onclick="closePromotionEditModal()">Hủy</button>
   </div>
+ </div>
 </div>
-
+<!-- modal thống kê và báo cáo -->
+<div id="reportSection" style="display: none;">
+  <h1>Thống kê và báo cáo</h1>
+  <canvas id="topProductsChart" width="400" height="200"></canvas>
+  <canvas id="revenueChart" width="100" height="50"></canvas>
+  <canvas id="orderStatusChart" width="400" height="50"></canvas>
+</div>
   <script src="js/admin.js"></script>
 </body>
 </html>

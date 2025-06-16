@@ -541,7 +541,7 @@ fetch('/api/products/featured')
   div.innerHTML = `
     <img src="${p.image}" />
     <h3>${p.name}</h3>
-    <p>${p.price} VND</p>
+    <p>Giá: ${p.price} VND</p>
   `;
   container.appendChild(div);
 
@@ -605,8 +605,8 @@ fetch('/api/products/promotions')
   item.appendChild(discountPercent);
   item.appendChild(discountedPrice);
   item.appendChild(button);
-
   promotionsEl.appendChild(item);
+
 });
   })
   .catch(err => {
@@ -618,6 +618,7 @@ fetch('/api/products/promotions')
 function formatCurrency(amount) {
   return Number(amount).toLocaleString('vi-VN') + 'đ';
 }
+
 
 
 

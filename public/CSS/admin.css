@@ -1,113 +1,112 @@
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Roboto', sans-serif;
-    }
-    body {
-      display: flex;
-      min-height: 100vh;
-      background-color: #f5efef;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #2f3542;
-      color: #fff;
-      padding: 20px;
-      flex-shrink: 0;
-    }
-    .sidebar h2 {
-      margin-bottom: 30px;
-      text-align: center;
-      font-weight: 500;
-    }
-    .sidebar ul {
-      list-style: none;
-    }
-    .sidebar ul li {
-      margin: 15px 0;
-    }
-    .sidebar ul li a {
-      color: #fff;
-      text-decoration: none;
-      display: block;
-      padding: 10px;
-      border-radius: 6px;
-      transition: background 0.2s ease;
-    }
-    .sidebar ul li a:hover {
-      background-color: #57606f;
-    }
-    .main-content {
-      flex-grow: 1;
-      padding: 30px;
-      overflow-y: auto;
-    }
-    h1 {
-      margin-bottom: 10px;
-      font-size: 24px;
-    }
-    h2 {
-      margin: 20px 0 10px;
-    }
-    .form-group,
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input, select, textarea {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      flex: 1;
-      min-width: 200px;
-    }
-    button {
-      padding: 10px 15px;
-      background-color: #2ed573;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: white;
-    }
-    button:hover {
-      background-color: #1eae63;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 10px;
-      text-align: center;
-    }
-    .scrollable-table {
-      overflow-x: auto;
-    }
-    #logoutBtn {
-      background-color: #ff4757;
-      margin-bottom: 20px;
-    }
-    #editModal {
-      display: none;
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 999;
-    }
-    #editModal > div {
-      background: #fff;
-      padding: 20px;
-      width: 400px;
-      margin: 100px auto;
-      position: relative;
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+body {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5efef;
+}
+.sidebar {
+  width: 220px;
+  background-color: #2f3542;
+  color: #fff;
+  padding: 20px;
+  flex-shrink: 0;
+}
+.sidebar h2 {
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 500;
+}
+.sidebar ul {
+  list-style: none;
+}
+.sidebar ul li {
+  margin: 15px 0;
+}
+.sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+.sidebar ul li a:hover {
+  background-color: #57606f;
+}
+.main-content {
+  flex-grow: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+h1 {
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+h2 {
+  margin: 20px 0 10px;
+}
+.form-group,form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+input, select, textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1;
+  min-width: 200px;
+}
+button {
+  padding: 10px 15px;
+  background-color: #2ed573;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+button:hover {
+  background-color: #1eae63;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table, th, td {
+  border: 1px solid #ddd;
+}
+th, td {
+  padding: 10px;
+  text-align: center;
+}
+.scrollable-table {
+  overflow-x: auto;
+}
+#logoutBtn {
+  background-color: #ff4757;
+  margin-bottom: 20px;
+}
+#editModal {
+  display: none;
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+#editModal > div {
+  background: #fff;
+  padding: 20px;
+  width: 400px;
+  margin: 100px auto;
+  position: relative;
+}
      
 #productTable {
   width: 100%;
@@ -149,4 +148,33 @@
   top: 0;
 }
 
+.chart-container {
+  width: 400px;
+  margin: 20px auto;
+}
 
+
+
+#reportSection {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  color: #2c3e50;
+}
+  
+#reportSection h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #3498db;
+  font-size: 28px;
+  font-weight: 600;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+
+
+
+  
