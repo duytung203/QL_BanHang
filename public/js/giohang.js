@@ -41,32 +41,46 @@ function saveCart() {
 }
 // Hàm xử lý sự kiện khi người dùng nhấn nút "Thanh toán"
 function checkout() {
-  if (!cart || cart.length === 0) {
+  const rawCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (!Array.isArray(rawCart) || rawCart.length === 0) {
     alert("Giỏ hàng đang trống!");
     return;
   }
+
+  // Chỉ gửi id + quantity
+  const simplifiedCart = rawCart.map(item => ({
+    id: item.id,
+    quantity: item.quantity
+  }));
 
   fetch('/api/cart/checkout', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    credentials: 'include', 
-    body: JSON.stringify({ cart })
+    credentials: 'include', // Gửi cookie session
+    body: JSON.stringify({ cart: simplifiedCart })
   })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message || "Đặt hàng thành công!");
-    localStorage.removeItem("cart");
-    cart = [];
-    renderCart();
-    location.reload();
-  })
-  .catch(err => {
-    console.error("Lỗi:", err);
-    alert("Bạn cần đăng nhập để đặt hàng.");
-  });
+    .then(res => res.json())
+    .then(data => {
+      if (data.error || data.message?.includes('Lỗi')) {
+        alert(data.message || "Đã có lỗi xảy ra!");
+        return;
+      }
+
+      alert(data.message || "Đặt hàng thành công!");
+      localStorage.removeItem("cart");
+      cart = [];
+      renderCart();
+      location.reload();
+    })
+    .catch(err => {
+      console.error("Lỗi hệ thống:", err);
+      alert("Đặt hàng thất bại. Vui lòng thử lại sau.");
+    });
 }
+
 
 // Hiển thị giỏ hàng khi trang được tải
 document.addEventListener('DOMContentLoaded', () => {
@@ -159,21 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 // Hàm xử lý thanh toán
-function handlePayment(orderId, amount) {
-  if (confirm(`Bạn có chắc chắn muốn thanh toán đơn hàng #${orderId} với số tiền ${amount.toLocaleString('vi-VN')} VND?`)) {
-    console.log('Đang xử lý thanh toán ...');
-    setTimeout(() => {
-      const success = Math.random() < 0.9;
-      if (success) {
-        alert('Thanh toán thành công!');
-  
-        location.reload();
-      } else {
-        alert('Thanh toán thất bại! Vui lòng thử lại.');
-      }
-    }, 1000);
-  }
+  function handlePayment(orderId, amount) {
+  // Chuyển sang trang thanhtoan.html và truyền tham số qua URL
+  const query = `thanhtoan.html?orderId=${orderId}&amount=${amount}`;
+  window.location.href = query;
 }
+
 
 
 window.onload = renderCart;

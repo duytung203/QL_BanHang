@@ -128,16 +128,19 @@ function confirmAddToCart() {
     alert("Số lượng không hợp lệ");
     return;
   }
+
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   const index = cart.findIndex(item => item.id === selectedProduct.id);
+  const finalPrice = selectedProduct.discounted_price || selectedProduct.price;
+
   if (index !== -1) {
     cart[index].quantity += quantity;
   } else {
     cart.push({
       id: selectedProduct.id,
       name: selectedProduct.name,
-      price: selectedProduct.price,
+      price: finalPrice, // ✅ Giá sau khuyến mãi nếu có
       image: selectedProduct.image,
       quantity: quantity,
     });
@@ -148,6 +151,7 @@ function confirmAddToCart() {
   closeQuantityModal();
   alert("Đã thêm vào giỏ hàng!");
 }
+
 // Hàm đóng modal chọn số lượng
 function closeQuantityModal() {
   document.getElementById("quantityModal").style.display = "none";
@@ -199,26 +203,35 @@ renderProducts();
     });
   });
 // hàm xử lý sự kiện click vào nút đăng nhập
-  async function login() {
+ async function login() {
   const email = document.querySelector('#loginForm input[type="text"]').value;
   const password = document.querySelector('#loginForm input[type="password"]').value;
+
   const res = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: "include",
     body: JSON.stringify({ email, password })
   });
+
   const data = await res.json();
+
   if (res.ok) {
+    const user = {
+      id: data.userId,
+      username: data.username,
+      role: data.role
+    };
+
+    localStorage.setItem('user', JSON.stringify(user)); // 👈 Thêm dòng này
     localStorage.setItem('token', data.token);
-    localStorage.setItem('username', data.username);
-    localStorage.setItem('userId', data.userId);
-     localStorage.removeItem("cart"); 
+    localStorage.removeItem("cart");
+
     updateUserMenu();      
     toggleModal(false);    
     alert(data.message);   
-    if (data.role === 'admin') {
-      localStorage.setItem('role', 'admin');
+
+    if (user.role === 'admin') {
       alert("Đăng nhập với quyền quản trị viên");
       window.location.href = '/admin.html';
     } else {
@@ -228,6 +241,7 @@ renderProducts();
     alert(data.message || 'Đăng nhập thất bại');
   }
 }
+
 
 
 // Xử lý sự kiện click vào nút đăng ký
@@ -264,27 +278,27 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // Cập nhật menu người dùng khi trang được tải
 function updateUserMenu() {
+  const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
-  const username = localStorage.getItem('username');
 
   const userMenu = document.getElementById('userMenu');
-  if (token && username && userMenu) {
+  if (token && user?.username && userMenu) {
     userMenu.innerHTML = `
       <div class="dropdown">
-        <button class="dropbtn" onclick="toggleUserMenu()">Xin chào ${username}</button>
+        <button class="dropbtn" onclick="toggleUserMenu()">Xin chào ${user.username}</button>
         <div class="dropdown-content" id="userDropdown">
           <a href="nguoidung.html" target="_blank">Thông tin người dùng</a>
           <a href="#">Lịch sử giao dịch</a>
           <a href="#" onclick="logout()">Đăng xuất</a>
-          </div>
+        </div>
       </div>
-        <button class="cart-btn" onclick="goToCart()">Giỏ hàng (<span id="cart-count">0</span>)</button></div> 
-      </div>
+      <button class="cart-btn" onclick="goToCart()">Giỏ hàng (<span id="cart-count">0</span>)</button>
     `;
     const modal = document.getElementById('loginModal');
     if (modal) toggleModal(false);
   }
 }
+
 // Hàm hiển thị menu người dùng
 function toggleUserMenu() {
   const dropdown = document.getElementById('userDropdown');
@@ -618,6 +632,46 @@ fetch('/api/products/promotions')
 function formatCurrency(amount) {
   return Number(amount).toLocaleString('vi-VN') + 'đ';
 }
+
+
+ function toggleChat() {
+    const chatBox = document.getElementById('chatContainer');
+    chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  function appendMessage(text, sender) {
+    const chatMessages = document.getElementById('chatMessages');
+    const msg = document.createElement('div');
+    msg.className = `bubble ${sender}`;
+    msg.textContent = text;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    appendMessage(text, 'user');
+    input.value = '';
+
+    try {
+      const res = await fetch('/api/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json();
+      const reply = data?.reply || "Xin lỗi, mình chưa hiểu.";
+      appendMessage(reply, 'bot');
+    } catch (error) {
+      appendMessage("Lỗi khi gọi AI. Thử lại sau!", 'bot');
+    }
+  }
+
+
 
 
 

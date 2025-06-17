@@ -9,6 +9,8 @@ const productRoutes = require('./routes/products'); // routes cho việc quản 
 const feedbackRoutes = require('./routes/feedback'); // routes cho việc quản lý phản hồi
 const cartRouter = require('./routes/cart'); // routes cho việc quản lý giỏ hàng
 const ReportRoutes = require('./routes/reports'); // routes cho việc báo cáo thống kê
+const paymentRoute = require('./routes/payment')(db);
+const chatbotRoutes = require('./routes/chatbot');
 
 require('dotenv').config();
 
@@ -32,6 +34,8 @@ app.use(session({
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Thư mục chứa các tệp tĩnh như HTML, CSS, JS
+app.use('/api/payment', paymentRoute);
+app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/reports', ReportRoutes); // đường dẫn API cho báo cáo thống kê
 app.use('/api/products', productRoutes); // Đường dẫn API cho sản phẩm
 app.use('/api/feedback', feedbackRoutes); // Đường dẫn API cho phản hồi

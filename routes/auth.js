@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-// Middleware để kiểm tra quyền truy cập
+
 // Đăng ký tài khoản
 module.exports = (db) => {
   router.post('/register', async (req, res) => {
@@ -51,6 +51,7 @@ router.post('/login', (req, res) => {
     res.json({
       message: 'Đăng nhập thành công',
       role: user.role,
+      userId: user.id,
       username: user.username
     });
   });

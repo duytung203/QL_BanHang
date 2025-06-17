@@ -74,6 +74,16 @@
   </div>
 </div>
 <main>
+<button id="chatToggle" onclick="toggleChat()">💬</button>
+
+<div id="chatContainer" class="chat-container" style="display: none;">
+  <div class="chat-header">ThanhTraTea Chatbot 🍹</div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input">
+    <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." />
+    <button onclick="sendMessage()">➤</button>
+  </div>
+</div>
   <section id="featured-products">
   <h2>🌟 Sản phẩm bán chạy nhất tuần </h2>
   <div id="featured-list" class="product-grid"></div>
@@ -97,7 +107,7 @@
         <option value="name_desc">Tên Z-A</option>
       </select>
       <!-- Nút tìm kiếm -->
-    <button onclick="searchProducts()">Tìm kiếm</button>
+    <button id="button1" onclick="searchProducts()">Tìm kiếm</button>
   </div>
      <div id="noProductsMessage" style="display: none; color: red;">Không có sản phẩm phù hợp với từ khóa tìm kiếm.</div>
   <div class="container">

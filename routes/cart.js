@@ -23,36 +23,73 @@ router.post('/checkout', async (req, res) => {
       return res.status(400).json({ message: 'Giỏ hàng không hợp lệ.' });
     }
 
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const productIds = cart.map(item => item.id);
 
-    let orderId;
-    try {
-      const [result] = await db.promise().execute(
-        'INSERT INTO orders (user_id, total_price) VALUES (?, ?)',
-        [userId, total]
-      );
-      orderId = result.insertId;
-    } catch (err) {
-      return res.status(500).json({ error: 'Không thể tạo đơn hàng.', detail: err.message });
-    }
+    // Truy vấn sản phẩm và giá khuyến mãi (nếu có)
+    const [products] = await db.promise().query(
+      `SELECT 
+         p.id, p.name, p.price,
+         IF(pr.discount_percent IS NOT NULL 
+            AND CURDATE() BETWEEN pr.start_date AND pr.end_date,
+            ROUND(p.price * (100 - pr.discount_percent) / 100, 0),
+            p.price
+         ) AS final_price
+       FROM products p
+       LEFT JOIN promotions pr ON p.id = pr.product_id
+       WHERE p.id IN (${productIds.map(() => '?').join(',')})`,
+      productIds
+    );
 
-    try {
-      const insertPromises = cart.map(item => {
-        return db.promise().execute(
-          'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
-          [orderId, item.id, item.quantity, item.price]
-        );
+    // Tạo map để tra cứu sản phẩm
+    const productMap = {};
+    products.forEach(p => {
+      productMap[p.id] = p;
+    });
+
+    // Tính tổng đơn hàng và chuẩn bị chi tiết
+    let total = 0;
+    const orderItems = [];
+
+    for (const item of cart) {
+      const product = productMap[item.id];
+      if (!product) continue;
+
+      const price = product.final_price;
+      total += price * item.quantity;
+
+      orderItems.push({
+        productId: item.id,
+        quantity: item.quantity,
+        price
       });
-      await Promise.all(insertPromises);
-    } catch (err) {
-      return res.status(500).json({ message: 'Lỗi khi lưu chi tiết đơn hàng.', detail: err.message });
     }
 
-    return res.json({ message: 'Đặt hàng thành công!' });
+    // Tạo đơn hàng
+    const [orderResult] = await db.promise().execute(
+      'INSERT INTO orders (user_id, total_price) VALUES (?, ?)',
+      [userId, total]
+    );
+    const orderId = orderResult.insertId;
+
+    // Lưu chi tiết đơn hàng
+    const insertPromises = orderItems.map(item => {
+      return db.promise().execute(
+        'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
+        [orderId, item.productId, item.quantity, item.price]
+      );
+    });
+    await Promise.all(insertPromises);
+
+    return res.json({ message: 'Đặt hàng thành công!', orderId });
   } catch (err) {
-    return res.status(500).json({ message: 'Lỗi hệ thống, vui lòng thử lại sau.', detail: err.message });
+    console.error('Lỗi khi checkout:', err);
+    return res.status(500).json({
+      message: 'Lỗi hệ thống, vui lòng thử lại sau.',
+      detail: err.message
+    });
   }
 });
+
 
 // dơn hang cua toi
 router.get('/my-orders', authenticate, async (req, res) => {
@@ -138,7 +175,6 @@ router.delete('/orders/:id', async (req, res) => {
 
     res.status(200).json({ message: 'Đã hủy đơn hàng thành công' });
   } catch (error) {
-    console.error('Lỗi xoá đơn hàng:', error);
     res.status(500).json({ error: 'Lỗi khi hủy đơn hàng' });
   }
 });

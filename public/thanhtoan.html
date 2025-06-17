@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thanh toán - ThanhTraTea</title>
+  <link rel="stylesheet" href="CSS/thanhtoan.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Thanh toán đơn hàng</h2>
+
+    <div class="section">
+      <h3>1. Thông tin giao hàng</h3>
+      <label>Họ tên người nhận</label>
+        <input type="text" name="fullname" placeholder="Nguyễn Văn A">
+    <label>Email</label>
+        <input type="email" name="email" placeholder="example@email.com">
+    <label>Số điện thoại</label>
+        <input type="text" name="phone" placeholder="0123456789">
+    <label>Địa chỉ nhận hàng</label>
+    <textarea name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..."></textarea>
+
+    <div class="section">
+      <h3>2. Phương thức thanh toán</h3>
+      <select>
+        <option>Thanh toán khi nhận hàng (COD)</option>
+        <option>Chuyển khoản ngân hàng</option>
+        <option>Ví điện tử (Momo, ZaloPay...)</option>
+      </select>
+    </div>
+
+    <div class="section order-summary">
+
+    </div>
+
+    <div class="section">
+      <button class="btn" onclick="xacNhanThanhToan()">Xác nhận thanh toán</button>
+    </div>
+  </div>
+  <script src="js/thanhtoan.js"></script>
+</body>
+</html>
