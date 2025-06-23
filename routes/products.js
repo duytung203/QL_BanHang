@@ -141,9 +141,11 @@ router.get('/search', (req, res) => {
 // sap xep san pham
 router.get('/sort', (req, res) => {
   const sort = req.query.sort;
-  let query = 'SELECT * FROM products';
-  let orderBy = '';
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 15;
+  const offset = (page - 1) * limit;
 
+  let orderBy = '';
   switch (sort) {
     case 'price_asc':
       orderBy = ' ORDER BY price ASC';
@@ -161,12 +163,25 @@ router.get('/sort', (req, res) => {
       return res.status(400).json({ error: 'Tham số sort không hợp lệ' });
   }
 
-  db.query(query + orderBy, (err, results) => {
+  // Lấy sản phẩm theo trang
+  const productQuery = `SELECT * FROM products${orderBy} LIMIT ? OFFSET ?`;
+  db.query(productQuery, [limit, offset], (err, products) => {
     if (err) {
       console.error('Lỗi SQL:', err);
       return res.status(500).json({ error: 'Lỗi truy vấn sản phẩm' });
     }
-    res.json(results);
+
+    // Đếm tổng số sản phẩm
+    db.query('SELECT COUNT(*) AS total FROM products', (err2, result) => {
+      if (err2) {
+        console.error('Lỗi đếm sản phẩm:', err2);
+        return res.status(500).json({ error: 'Lỗi đếm số lượng sản phẩm' });
+      }
+
+      const total = result[0].total;
+      const totalPages = Math.ceil(total / limit);
+      res.json({ products, totalPages });
+    });
   });
 });
 
@@ -303,5 +318,55 @@ router.put('/:id', (req, res) => {
     });
   });
 });
+
+router.get('/history/${user.id}', (req, res) => {
+  const userId = req.params.userId;
+  const sql = `
+    SELECT 
+      o.id AS order_id,
+      o.created_at,
+      o.total_price,
+      o.status,
+      p.name AS product_name,
+      p.image,
+      oi.quantity,
+      oi.price AS item_price
+    FROM orders o
+    JOIN order_items oi ON o.id = oi.order_id
+    JOIN products p ON oi.product_id = p.id
+    WHERE o.user_id = ?
+    ORDER BY o.created_at DESC`;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error('Lỗi truy vấn:', err);
+    return res.status(500).json({ error: 'Lỗi truy vấn lịch sử đơn hàng' });
+  }
+
+  const history = {};
+
+  results.forEach(row => {
+    if (!history[row.order_id]) {
+      history[row.order_id] = {
+        order_id: row.order_id,
+        created_at: row.created_at,
+        total_price: row.total_price,
+        status: row.status,
+        items: []
+      };
+    }
+
+  history[row.order_id].items.push({
+    name: row.product_name,
+    image: row.image,
+    quantity: row.quantity,
+    price: row.item_price
+    });
+  });
+
+  res.json(Object.values(history));
+  });
+});
+
 module.exports = router;
 

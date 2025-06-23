@@ -26,7 +26,12 @@ async function xacNhanThanhToan() {
 
   // Kiểm tra dữ liệu đầu vào
   if (!fullname || !email || !phone || !address || !orderId || !amount || !method) {
-    alert("Vui lòng nhập đầy đủ thông tin!");
+    Swal.fire({
+    icon: 'warning',
+    title: '⚠️ Thiếu thông tin',
+    text: 'Vui lòng nhập đầy đủ họ tên, email, số điện thoại, địa chỉ và phương thức thanh toán.',
+    confirmButtonColor: '#f57c00'
+  });
     return;
   }
 
@@ -40,11 +45,24 @@ async function xacNhanThanhToan() {
 
     const recipientData = await recipientRes.json();
 
-    if (!recipientRes.ok) {
-      throw new Error(recipientData.message || 'Không thể lưu thông tin người nhận.');
-    }
+   if (!recipientRes.ok) {
+  Swal.fire({
+    icon: 'error',
+    title: '❌ Lỗi khi lưu thông tin người nhận',
+    text: recipientData.message || 'Không thể lưu thông tin người nhận. Vui lòng thử lại.',
+    confirmButtonColor: '#d33'
+  });
+  return; // Dừng tiến trình thanh toán
+}
 
-    console.log("✅ Đã lưu người nhận, tiến hành thanh toán...");
+Swal.fire({
+  icon: 'info',
+  title: '✅ Đã lưu thông tin người nhận',
+  text: 'Tiến hành thanh toán...',
+  timer: 1500,
+  showConfirmButton: false
+});
+
 
     // 2. Gửi thông tin thanh toán
     const paymentRes = await fetch('/api/payment', {
@@ -60,12 +78,26 @@ async function xacNhanThanhToan() {
 
     const paymentData = await paymentRes.json();
 
-    if (!paymentRes.ok) {
-      throw new Error(paymentData.message || 'Thanh toán thất bại');
-    }
+ if (!paymentRes.ok) {
+  Swal.fire({
+    icon: 'error',
+    title: '❌ Thanh toán thất bại',
+    text: paymentData.message || 'Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại.',
+    confirmButtonColor: '#e53935'
+  });
+  return; // Dừng tiến trình nếu thất bại
+}
 
-    alert("✅ Thanh toán thành công!");
-    window.location.href = "/giohang.html";
+Swal.fire({
+  icon: 'success',
+  title: '✅ Thanh toán thành công!',
+  text: 'Cảm ơn bạn đã đặt hàng!',
+  timer: 2000,
+  showConfirmButton: false
+}).then(() => {
+  window.location.href = "/giohang.html";
+});
+
 
   } catch (err) {
     console.error("❌ Lỗi:", err);

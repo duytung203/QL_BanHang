@@ -24,22 +24,18 @@ function renderCart() {
 
   document.getElementById('total-price').textContent = total;
 }
-// Hàm cập nhật số lượng sản phẩm trong giỏ hàng
 function updateQuantity(index, quantity) {
   cart[index].quantity = parseInt(quantity);
   saveCart();
 }
-// Hàm xoá sản phẩm khỏi giỏ hàng
 function removeItem(index) {
   cart.splice(index, 1);
   saveCart();
 }
-// Hàm lưu giỏ hàng vào localStorage và cập nhật giao diện
 function saveCart() {
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
-// Hàm xử lý sự kiện khi người dùng nhấn nút "Thanh toán"
 function checkout() {
   const rawCart = JSON.parse(localStorage.getItem("cart")) || [];
 

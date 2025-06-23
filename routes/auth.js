@@ -30,17 +30,26 @@ router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: 'Vui lòng nhập email và mật khẩu' });
+    return res.status(400).json({ message: 'Vui lòng nhập email và mật khẩu', success: false });
   }
 
   const sql = 'SELECT * FROM users WHERE email = ?';
   db.query(sql, [email], async (err, results) => {
-    if (err) return res.status(500).json({ message: 'Lỗi máy chủ', error: err });
-    if (results.length === 0) return res.status(401).json({ message: 'Sai thông tin đăng nhập' });
+    if (err) {
+      console.error('Lỗi DB:', err);
+      return res.status(500).json({ message: 'Lỗi máy chủ', success: false });
+    }
+
+    if (results.length === 0) {
+      return res.status(401).json({ message: 'Sai thông tin đăng nhập', success: false });
+    }
 
     const user = results[0];
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ message: 'Sai mật khẩu' });
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Sai mật khẩu', success: false });
+    }
 
     req.session.user = {
       id: user.id,
@@ -48,13 +57,15 @@ router.post('/login', (req, res) => {
       role: user.role
     };
 
-    res.json({
+    return res.status(200).json({
       message: 'Đăng nhập thành công',
-      role: user.role,
+      success: true,
       userId: user.id,
-      username: user.username
+      username: user.username,
+      role: user.role
     });
   });
 });
+
   return router;
 };

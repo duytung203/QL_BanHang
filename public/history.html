@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử giao dịch</title>
+     <link rel="stylesheet" href="CSS/history.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+<div class="wrapper">
+  <div class="header-content">
+    <div class="logo" aria-label="Thanh Tra Tea">THANH TRA TEA</div>
+    <div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="#" id="menu-coffee">Coffee</a></li>
+          <li><a href="#"id="menu-tea">Trà</a></li>
+          <li class="menuchinh" aria-haspopup="true" aria-expanded="false">
+            <a href="#">Menu</a>
+            <ul class="menuphu" role="menu">
+              <li><a href="#" id="menu-banh">Bánh ngọt</a></li>
+              <li><a href="#" id="menu-anvat">Đồ ăn vặt</a></li>
+            </ul>
+          </li>
+          <li><a href="tintuc.html">Tin tức</a></li>
+          <li><a href="tuyendung.html">Tuyển dụng</a></li>
+        </ul>
+      </nav>    
+    </div>
+  </div>
+
+  <div class="order-history">
+  <h2>Lịch sử giao dịch của <span id="username-display"></span></h2>
+  <table id="order-table">
+    <thead>
+      <tr>
+        <th>Mã đơn</th>
+        <th>Ngày đặt</th>
+        <th>Trạng thái</th>
+        <th>Tổng tiền</th>
+        <th>Sản phẩm</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="search-bar">
+  <label>Từ ngày:
+    <input type="date" id="fromDate">
+  </label>
+  <label>Đến ngày:
+    <input type="date" id="toDate">
+  </label>
+  <button onclick="searchOrders()">🔍 Tìm kiếm</button>
+  <button id="export-btn">📤 Xuất báo cáo</button>
+</div>
+</div>
+
+
+<div id="loading-message" style="display: none; text-align: center; margin-top: 12px; color: #4caf50; font-style: italic;">
+  🔄 Đang tìm đơn hàng, vui lòng chờ...
+</div>
+
+<script>
+  const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.username) {
+    document.getElementById('username-display').textContent = `- ${user.username}`;}
+
+  fetch(`/api/orders/history/${user.id}`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector('#order-table tbody');
+      tbody.innerHTML = ''; // clear table
+
+      data.forEach(order => {
+        const productList = order.items.map(item => 
+          `<li>${item.name} x${item.quantity} - ${item.price.toLocaleString()}đ</li>`
+        ).join('');
+
+        const row = `
+          <tr>
+            <td>#${order.order_id}</td>
+            <td>${new Date(order.created_at).toLocaleString()}</td>
+            <td>${order.status}</td>
+            <td>${order.total_price.toLocaleString()}đ</td>
+            <td><ul>${productList}</ul></td>
+          </tr>
+        `;
+
+        tbody.insertAdjacentHTML('beforeend', row);
+      });
+    })
+    .catch(err => {
+      console.error('Lỗi tải đơn hàng:', err);
+      document.querySelector('#order-table tbody').innerHTML =
+        '<tr><td colspan="5">Không thể tải dữ liệu</td></tr>';
+    });
+    function searchOrders() {
+  const fromDate = document.getElementById('fromDate').value;
+  const toDate = document.getElementById('toDate').value;
+  loadOrders(fromDate, toDate);
+}
+function loadOrders(fromDate = '', toDate = '') {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const loadingEl = document.getElementById('loading-message');
+  const tbody = document.querySelector('#order-table tbody');
+
+  // Hiện "Đang tìm"
+  loadingEl.style.display = 'block';
+  loadingEl.style.opacity = '1';
+  tbody.innerHTML = ''; 
+
+  let url = `/api/orders/history/${user.id}`;
+  const params = new URLSearchParams();
+
+  if (fromDate) params.append('fromDate', fromDate);
+  if (toDate) params.append('toDate', toDate);
+
+  if (params.toString()) {
+    url += '?' + params.toString();
+  }
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Không có đơn hàng phù hợp.</td></tr>`;
+      } else {
+        data.forEach(order => {
+          const productList = order.items.map(item =>
+            `<li>${item.name} x${item.quantity} - ${item.price.toLocaleString()}đ</li>`
+          ).join('');
+
+          const row = `
+            <tr>
+              <td>#${order.order_id}</td>
+              <td>${new Date(order.created_at).toLocaleString()}</td>
+              <td>${order.status}</td>
+              <td>${order.total_price.toLocaleString()}đ</td>
+              <td><ul>${productList}</ul></td>
+            </tr>
+          `;
+
+          tbody.insertAdjacentHTML('beforeend', row);
+        });
+      }
+
+      // Ẩn hiệu ứng sau khi xong
+      setTimeout(() => {
+        loadingEl.style.opacity = '0';
+        setTimeout(() => loadingEl.style.display = 'none', 2000);
+      }, 2000);
+    })
+    .catch(err => {
+      console.error('Lỗi khi tải:', err);
+      tbody.innerHTML = `<tr><td colspan="5">⚠️ Lỗi khi tải dữ liệu.</td></tr>`;
+      loadingEl.style.display = 'none';
+    });
+}
+document.getElementById('export-btn').addEventListener('click', () => {
+  Swal.fire({
+    title: 'Xuất báo cáo?',
+    text: 'Bạn có muốn tải về báo cáo lịch sử đơn hàng không?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Tải về',
+    cancelButtonText: 'Huỷ',
+    confirmButtonColor: '#43a047',
+    cancelButtonColor: '#e57373'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const fromDate = document.getElementById('fromDate').value;
+      const toDate = document.getElementById('toDate').value;
+
+      let url = `/api/orders/export/${user.id}`;
+      const params = new URLSearchParams();
+      if (fromDate) params.append('fromDate', fromDate);
+      if (toDate) params.append('toDate', toDate);
+      if (params.toString()) url += '?' + params.toString();
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'lich_su_don_hang.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Đã bắt đầu tải báo cáo!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+  });
+});
+
+</script>
+</body>
+</html>

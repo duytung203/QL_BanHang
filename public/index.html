@@ -6,6 +6,8 @@
   <title>Thanh Trà Coffee</title>
   <link rel="stylesheet" href="CSS/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body> 
   <!-- Header -->
@@ -33,7 +35,7 @@
       <!-- User Menu đăng nhập và giỏ hàng -->
       <div id="userMenu"> 
         <button class="login-btn" onclick="toggleModal(true)" aria-label="Đăng nhập">Đăng nhập</button>
-        <button class="cart-btn" onclick="goToCart()" aria-label="Giỏ hàng">
+        <button class="cart-btn" onclick="goToCart()" aria-label="🛒Giỏ hàng">
          Giỏ hàng (<span id="cart-count" aria-live="polite">0</span>)
         </button>
       </div>     
@@ -74,16 +76,17 @@
   </div>
 </div>
 <main>
+<!-- Nút mở chat -->
 <button id="chatToggle" onclick="toggleChat()">💬</button>
-
 <div id="chatContainer" class="chat-container" style="display: none;">
   <div class="chat-header">ThanhTraTea Chatbot 🍹</div>
   <div class="chat-messages" id="chatMessages"></div>
   <div class="chat-input">
-    <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." />
+    <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." onkeydown="handleKey(event)" />
     <button onclick="sendMessage()">➤</button>
   </div>
 </div>
+
   <section id="featured-products">
   <h2>🌟 Sản phẩm bán chạy nhất tuần </h2>
   <div id="featured-list" class="product-grid"></div>
@@ -119,7 +122,7 @@
   </div>
 </main>
 <!-- Modal đăng nhập và đăng ký -->
-  <div id="modalOverlay" class="modal-overlay" onclick="toggleModal(false)"></div>
+<div id="modalOverlay" class="modal-overlay" onclick="toggleModal(false)"></div>
  <div id="loginModal" class="modal">
     <div class="modal-content">
       <div class="tabs">

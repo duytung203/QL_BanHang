@@ -44,7 +44,11 @@ async function saveField(field) {
   const input = document.getElementById(`${field}-input`);
   const value = input.value.trim();
   if (!value) {
-    alert(`Vui lòng nhập ${field === 'username' ? 'tên người dùng' : 'email'}`);
+    Swal.fire({
+      icon: 'warning',
+      title: '⚠️ Thiếu thông tin',
+      text: `Vui lòng nhập ${field === 'username' ? 'tên người dùng' : 'email'}`
+    });
     return;
   }
   try {
@@ -54,17 +58,29 @@ async function saveField(field) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: value })
     });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || `Lỗi server (mã ${response.status})`);
     }
-    alert("Cập nhật thành công!");
-    location.reload();
+    Swal.fire({
+      icon: 'success',
+      title: '✅ Cập nhật thành công!',
+      timer: 1500,
+      showConfirmButton: false
+    }).then(() => {
+      location.reload();
+    });
   } catch (err) {
-    alert(err.message);
+    Swal.fire({
+      icon: 'error',
+      title: '❌ Lỗi',
+      text: err.message || 'Không thể cập nhật thông tin.'
+    });
     input.focus();
   }
 }
+
 
 
 
@@ -84,14 +100,34 @@ async function handleChangePassword() {
       body: JSON.stringify({ oldPassword, newPassword })
     });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Đổi mật khẩu thất bại");
+   const data = await response.json();
 
-    alert(data.message || "Đổi mật khẩu thành công");
-  } catch (err) {
-    console.error("Lỗi đổi mật khẩu:", err);
-    alert(err.message);
+  if (!response.ok) {
+    Swal.fire({
+      icon: 'error',
+      title: '❌ Đổi mật khẩu thất bại',
+      text: data.message || 'Có lỗi xảy ra khi đổi mật khẩu. Vui lòng thử lại.'
+    });
+    return;
   }
+
+  Swal.fire({
+    icon: 'success',
+    title: '✅ Đổi mật khẩu thành công!',
+    text: data.message || 'Bạn có thể sử dụng mật khẩu mới ngay bây giờ.',
+    timer: 2000,
+    showConfirmButton: false
+  });
+  
+} catch (err) {
+  console.error("Lỗi đổi mật khẩu:", err);
+
+  Swal.fire({
+    icon: 'error',
+    title: '🚫 Lỗi hệ thống',
+    text: err.message || 'Không thể kết nối đến máy chủ.'
+  });
+}
 }
 
 // Hàm hiển thị form nhập mật khẩu

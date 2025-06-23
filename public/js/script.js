@@ -91,18 +91,29 @@ function renderPagination() {
 // Hàm chuyển hướng đến giỏ hàng
  function goToCart() {
   const token = localStorage.getItem('token');
-
   if (!token) {
-    alert('Bạn cần đăng nhập để truy cập giỏ hàng!');
-
+  Swal.fire({
+    icon: 'warning',
+    title: '🔐 Bạn chưa đăng nhập!',
+    text: 'Bạn cần đăng nhập để truy cập giỏ hàng.',
+    confirmButtonText: 'Đăng nhập',
+    confirmButtonColor: '#43a047'
+  }).then(() => {
     const loginModal = document.getElementById("loginModal");
     if (loginModal) {
       loginModal.style.display = "flex";
     } else {
-      alert("Không tìm thấy modal đăng nhập.");
+      Swal.fire({
+        icon: 'error',
+        title: '❌ Không tìm thấy modal đăng nhập!',
+        text: 'Vui lòng kiểm tra lại HTML hoặc đường dẫn.'
+      });
     }
-    return;
-  }
+  });
+
+  return;
+}
+
 
   window.location.href = 'giohang.html';
 }
@@ -110,9 +121,14 @@ function renderPagination() {
 let selectedProduct = null;
 // Hàm hiển thị modal để chọn số lượng sản phẩm
 function showQuantityModal(product) {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    alert("Bạn vui lòng đăng nhập");
+ const token = localStorage.getItem('token');
+if (!token) {
+  Swal.fire({
+    icon: 'warning',
+    title: '🔐 Bạn chưa đăng nhập!',
+    text: 'Vui lòng đăng nhập để tiếp tục.',
+    confirmButtonText: 'Đăng nhập ngay',
+    confirmButtonColor: '#43a047'})
     return;
   }
   selectedProduct = product;
@@ -124,10 +140,16 @@ function showQuantityModal(product) {
 // Hàm xác nhận thêm sản phẩm vào giỏ hàng
 function confirmAddToCart() {
   const quantity = parseInt(document.getElementById("quantityInput").value);
-  if (!selectedProduct || isNaN(quantity) || quantity <= 0) {
-    alert("Số lượng không hợp lệ");
-    return;
-  }
+if (!selectedProduct || isNaN(quantity) || quantity <= 0) {
+  Swal.fire({
+    icon: 'warning',
+    title: '⚠️ Số lượng không hợp lệ',
+    text: 'Vui lòng nhập số lượng lớn hơn 0 và là dạng số.',
+    confirmButtonColor: '#f57c00'
+  });
+  return;
+}
+
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -140,16 +162,24 @@ function confirmAddToCart() {
     cart.push({
       id: selectedProduct.id,
       name: selectedProduct.name,
-      price: finalPrice, // ✅ Giá sau khuyến mãi nếu có
+      price: finalPrice, // Giá sau khuyến mãi nếu có
       image: selectedProduct.image,
       quantity: quantity,
     });
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartCount();
-  closeQuantityModal();
-  alert("Đã thêm vào giỏ hàng!");
+updateCartCount();
+closeQuantityModal();
+
+Swal.fire({
+  icon: 'success',
+  title: '🎉 Đã thêm vào giỏ hàng!',
+  showConfirmButton: false,
+  timer: 1500,
+  toast: true,
+  position: 'top-end'
+});
 }
 
 // Hàm đóng modal chọn số lượng
@@ -204,64 +234,136 @@ renderProducts();
   });
 // hàm xử lý sự kiện click vào nút đăng nhập
  async function login() {
-  const email = document.querySelector('#loginForm input[type="text"]').value;
+  const email = document.querySelector('#loginForm input[type="text"]').value.trim();
   const password = document.querySelector('#loginForm input[type="password"]').value;
 
-  const res = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: "include",
-    body: JSON.stringify({ email, password })
-  });
+  if (!email || !password) {
+    Swal.fire({
+      icon: 'warning',
+      title: '⚠️ Thiếu thông tin',
+      text: 'Vui lòng nhập email và mật khẩu.'
+    });
+    return;
+  }
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: "include",
+      body: JSON.stringify({ email, password })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (res.ok) {
-    const user = {
-      id: data.userId,
-      username: data.username,
-      role: data.role
-    };
+    if (res.ok && data.userId) {
+      const user = {
+        id: data.userId,
+        username: data.username,
+        role: data.role
+      };
 
-    localStorage.setItem('user', JSON.stringify(user)); // 👈 Thêm dòng này
-    localStorage.setItem('token', data.token);
-    localStorage.removeItem("cart");
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', data.token);
+      localStorage.removeItem("cart");
 
-    updateUserMenu();      
-    toggleModal(false);    
-    alert(data.message);   
+      updateUserMenu();
+      toggleModal(false);
 
-    if (user.role === 'admin') {
-      alert("Đăng nhập với quyền quản trị viên");
-      window.location.href = '/admin.html';
+      if (user.role === 'admin') {
+        Swal.fire({
+          icon: 'success',
+          title: '✅ Đăng nhập thành công',
+          text: 'Chào quản trị viên!',
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = '/admin.html';
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: '🎉 Đăng nhập thành công',
+          text: 'Chào mừng bạn quay trở lại!',
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = '/index.html';
+        });
+      }
     } else {
-      window.location.href = '/index.html';
+      Swal.fire({
+        icon: 'error',
+        title: '❌ Đăng nhập thất bại',
+        text: data.message || 'Sai thông tin đăng nhập'
+      });
     }
-  } else {
-    alert(data.message || 'Đăng nhập thất bại');
+
+  } catch (error) {
+    console.error('Lỗi khi đăng nhập:', error);
+    Swal.fire({
+      icon: 'error',
+      title: '🚫 Lỗi máy chủ',
+      text: 'Không thể kết nối đến server. Vui lòng thử lại sau.'
+    });
   }
 }
+
 
 
 
 // Xử lý sự kiện click vào nút đăng ký
 document.getElementById('registerBtn')?.addEventListener('click', register);
-async function register() {
-  const username = document.getElementById('registerUsername').value;
-  const email = document.getElementById('registerEmail').value;
-  const password = document.getElementById('registerPassword').value;
-  const res = await fetch('/api/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password })
-  });
 
-  const data = await res.json();
-  alert(data.message);
-  if (res.ok) {
-    switchTab('login');
+async function register() {
+  const username = document.getElementById('registerUsername').value.trim();
+  const email = document.getElementById('registerEmail').value.trim();
+  const password = document.getElementById('registerPassword').value;
+
+  if (!username || !email || !password) {
+    Swal.fire({
+      icon: 'warning',
+      title: '⚠️ Thiếu thông tin',
+      text: 'Vui lòng nhập đầy đủ tên, email và mật khẩu.'
+    });
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      Swal.fire({
+        icon: 'success',
+        title: '🎉 Đăng ký thành công!',
+        text: data.message || 'Bạn có thể đăng nhập ngay bây giờ.',
+        timer: 2000,
+        showConfirmButton: false
+      }).then(() => {
+        switchTab('login');
+      });
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: '❌ Đăng ký thất bại',
+        text: data.message || 'Vui lòng kiểm tra lại thông tin đăng ký.'
+      });
+    }
+  } catch (error) {
+    console.error('Lỗi đăng ký:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Lỗi máy chủ',
+      text: 'Không thể kết nối đến server. Vui lòng thử lại sau.'
+    });
   }
 }
+
 
 
 // chuyen tab dangnhap/dangky
@@ -288,11 +390,11 @@ function updateUserMenu() {
         <button class="dropbtn" onclick="toggleUserMenu()">Xin chào ${user.username}</button>
         <div class="dropdown-content" id="userDropdown">
           <a href="nguoidung.html" target="_blank">Thông tin người dùng</a>
-          <a href="#">Lịch sử giao dịch</a>
+          <a href="history.html">Lịch sử giao dịch</a>
           <a href="#" onclick="logout()">Đăng xuất</a>
         </div>
       </div>
-      <button class="cart-btn" onclick="goToCart()">Giỏ hàng (<span id="cart-count">0</span>)</button>
+      <button class="cart-btn" onclick="goToCart()">🛒Giỏ hàng (<span id="cart-count">0</span>)</button>
     `;
     const modal = document.getElementById('loginModal');
     if (modal) toggleModal(false);
@@ -312,7 +414,7 @@ function logout() {
   const userMenu = document.getElementById('userMenu');
   userMenu.innerHTML = `
     <button class="login-btn" onclick="toggleModal(true)">Đăng nhập</button>
-    <button class="cart-btn" onclick="goToCart()">Giỏ hàng (<span id="cart-count">0</span>)</button>
+    <button class="cart-btn" onclick="goToCart()">🛒Giỏ hàng (<span id="cart-count">0</span>)</button>
   `;
 }
 
@@ -488,55 +590,60 @@ async function loadFeedbacks() {
 }
 
 window.addEventListener('DOMContentLoaded', loadFeedbacks);
+window.addEventListener("DOMContentLoaded", updateCartCount);
 
  // lọc sản phẩm theo giá
-function searchProducts() {
+function searchProducts(page = 1) {
   const sort = document.getElementById('sort').value;
+  const limit = 15;
 
-fetch(`/api/products/sort?sort=${sort}`)
-  .then(res => res.json())
-  .then(data => {
-  if (!Array.isArray(data)) {
-    throw new Error(data.error || 'Lỗi không xác định từ server');
-  }
+  fetch(`/api/products/sort?sort=${sort}&page=${page}&limit=${limit}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!Array.isArray(data.products)) {
+        throw new Error(data.error || 'Dữ liệu không hợp lệ');
+      }
 
-  const container = document.getElementById('product-list');
-  container.innerHTML = '';
+      const container = document.getElementById('product-list');
+      container.innerHTML = '';
 
-  data.forEach(product => {
-  const card = document.createElement('div');
-  card.className = 'product-card';
+      data.products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
 
-  const image = document.createElement('img');
-  image.src = `${product.image}`;
-  image.alt = product.name;
-  image.className = 'product-image';
-  image.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+        const image = document.createElement('img');
+        image.src = product.image;
+        image.alt = product.name;
+        image.className = 'product-image';
+        image.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
 
-  const title = document.createElement('h3');
-  title.textContent = product.name;
-  title.style.cursor = 'pointer';
-  title.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
+        const title = document.createElement('h3');
+        title.textContent = product.name;
+        title.style.cursor = 'pointer';
+        title.onclick = () => location.href = `chitietsanpham.html?id=${product.id}`;
 
-  const price = document.createElement('p');
-  price.textContent = `Giá: ${product.price.toLocaleString()}đ`;
+        const price = document.createElement('p');
+        price.textContent = `Giá: ${product.price.toLocaleString()}đ`;
 
-  const button = document.createElement('button');
-  button.textContent = 'Thêm vào giỏ';
-  button.addEventListener('click', () => showQuantityModal(product));
+        const button = document.createElement('button');
+        button.textContent = 'Thêm vào giỏ';
+        button.onclick = () => showQuantityModal(product);
 
-  card.appendChild(image);
-  card.appendChild(title);
-  card.appendChild(price);
-  card.appendChild(button);
+        card.appendChild(image);
+        card.appendChild(title);
+        card.appendChild(price);
+        card.appendChild(button);
 
-  container.appendChild(card);
- });
-})
-  .catch(err => {
-  console.error('Lỗi tìm kiếm:', err.message);
- });
+        container.appendChild(card);
+      });
+
+      renderPagination(data.totalPages, page);
+    })
+    .catch(err => {
+      console.error('Lỗi tìm kiếm:', err.message);
+    });
 }
+
 
 // Lấy sản phẩm nổi bật và hiển thị
 fetch('/api/products/featured')
@@ -632,44 +739,59 @@ fetch('/api/products/promotions')
 function formatCurrency(amount) {
   return Number(amount).toLocaleString('vi-VN') + 'đ';
 }
+// bot chat
+function toggleChat() {
+  const chatBox = document.getElementById('chatContainer');
+  chatBox.style.display = chatBox.style.display === 'none' ? 'flex' : 'none';
+}
 
+function handleKey(e) {
+  if (e.key === 'Enter') sendMessage();
+}
 
- function toggleChat() {
-    const chatBox = document.getElementById('chatContainer');
-    chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
+function appendMessage(text, sender) {
+  const chatMessages = document.getElementById('chatMessages');
+  const msg = document.createElement('div');
+  msg.className = `message ${sender}`;
+
+  if (sender === 'bot') {
+    msg.innerHTML = `
+      <img src="/images/chatbot.png" class="avatar">
+      <div class="bubble">${text}</div>
+    `;
+    } else {
+    msg.innerHTML = `
+      <div class="bubble">${text}</div>
+      <img src="/images/user.png" class="avatar">
+    `;
   }
 
-  function appendMessage(text, sender) {
-    const chatMessages = document.getElementById('chatMessages');
-    const msg = document.createElement('div');
-    msg.className = `bubble ${sender}`;
-    msg.textContent = text;
-    chatMessages.appendChild(msg);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+  chatMessages.appendChild(msg);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendMessage(text, 'user');
+  input.value = '';
+
+  try {
+    const res = await fetch('/api/chatbot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await res.json();
+    document.querySelector('.bubble.bot:last-child')?.remove();
+    appendMessage(data.reply, 'bot');
+  } catch {
+    appendMessage('❌ Lỗi hệ thống!', 'bot');
   }
-
-  async function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
-    if (!text) return;
-
-    appendMessage(text, 'user');
-    input.value = '';
-
-    try {
-      const res = await fetch('/api/chatbot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
-      });
-
-      const data = await res.json();
-      const reply = data?.reply || "Xin lỗi, mình chưa hiểu.";
-      appendMessage(reply, 'bot');
-    } catch (error) {
-      appendMessage("Lỗi khi gọi AI. Thử lại sau!", 'bot');
-    }
-  }
+}
 
 
 
