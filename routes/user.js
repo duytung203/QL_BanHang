@@ -7,7 +7,7 @@ module.exports = (db) => {
 
 // Lấy danh sách người dùng
 router.get('/', (req, res) => {
-  db.query('SELECT id, username, email, role FROM users', (err, results) => {
+  db.query('SELECT id, username, email, role, is_locked FROM users', (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json(results);
   });
@@ -157,5 +157,22 @@ router.post('/password', (req, res) => {
   });
 });
 })
+// khóa tài khoản
+router.post('/lock', async (req, res) => {
+  const { userId, lock } = req.body;
+  const currentAdminId = req.user?.id;
+
+  if (parseInt(userId) === parseInt(currentAdminId)) {
+    return res.status(400).json({ error: "Không thể tự khóa chính mình." });
+  }
+
+  try {
+    await db.execute("UPDATE users SET is_locked = ? WHERE id = ?", [lock ? 1 : 0, userId]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Lỗi server." });
+  }
+});
+
 return router;
 };

@@ -45,12 +45,18 @@ router.post('/login', (req, res) => {
     }
 
     const user = results[0];
-    const isMatch = await bcrypt.compare(password, user.password);
 
+    // 👉 Kiểm tra tài khoản bị khóa
+    if (user.is_locked === 1) {
+      return res.status(403).json({ message: 'Tài khoản của bạn đã bị khóa', success: false });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Sai mật khẩu', success: false });
     }
 
+    // ✅ Lưu session nếu hợp lệ
     req.session.user = {
       id: user.id,
       username: user.username,
@@ -66,6 +72,5 @@ router.post('/login', (req, res) => {
     });
   });
 });
-
   return router;
 };

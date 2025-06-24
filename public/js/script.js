@@ -692,7 +692,7 @@ fetch('/api/products/promotions')
 
     data.forEach(product => {
   const item = document.createElement('div');
-  item.className = 'product-card'; // giống class bên danh sách sản phẩm
+  item.className = 'product-card';
 
   const image = document.createElement('img');
   image.src = product.image;
@@ -788,10 +788,25 @@ async function sendMessage() {
     const data = await res.json();
     document.querySelector('.bubble.bot:last-child')?.remove();
     appendMessage(data.reply, 'bot');
-  } catch {
+
+    if (Array.isArray(data.promotions) && data.promotions.length > 0) {
+      data.promotions.forEach(promo => {
+        const promoText = `
+🎉 <b>${promo.name}</b><br>
+Giá gốc: <s>${promo.price.toLocaleString()}đ</s><br>
+Giảm: ${promo.discount_percent}%<br>
+👉 <b>Còn lại: ${promo.discounted_price.toLocaleString()}đ</b>
+        `;
+        appendMessage(promoText, 'bot', true);
+      });
+    }
+
+  } catch (err) {
+    console.error('Lỗi gọi chatbot:', err);
     appendMessage('❌ Lỗi hệ thống!', 'bot');
   }
 }
+
 
 
 

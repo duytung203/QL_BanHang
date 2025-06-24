@@ -4,7 +4,13 @@ async function loadUsers() {
   const users = await res.json();
   const tbody = document.querySelector('#userTable tbody');
   tbody.innerHTML = '';
+
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const currentUserId = parseInt(currentUser?.id);
+
   users.forEach(u => {
+    const isLocked = parseInt(u.is_locked) === 1;
+
     tbody.innerHTML += `
       <tr>
         <td>${u.id}</td>
@@ -12,11 +18,74 @@ async function loadUsers() {
         <td>${u.email}</td>
         <td>${u.role}</td>
         <td>
+          <span style="color: ${isLocked ? 'red' : 'green'};">
+            ${isLocked ? 'Đã khóa' : 'Hoạt động'}
+          </span>
+        </td>
+        <td>
+          ${
+            u.id === currentUserId
+              ? '<i>Không thể tự khóa</i>'
+              : `<button onclick="toggleLock(${u.id}, ${isLocked})">
+                  ${isLocked ? 'Mở khóa' : 'Khóa'}
+                </button>`
+          }
+        </td>
+        <td>
           <button onclick="resetPassword(${u.id})">Reset Mật khẩu</button>
           <button onclick="deleteUser(${u.id})">Xoá</button>
         </td>
-      </tr>`;
+      </tr>
+    `;
   });
+}
+
+
+function toggleLock(userId, isLocked) {
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+  if (userId === currentUser?.id) {
+    alert("Bạn không thể tự khóa tài khoản của chính mình.");
+    return;
+  }
+const confirmMsg = isLocked ? "Bạn có chắc muốn <b>mở khóa</b> tài khoản này?" : "Bạn có chắc muốn <b>khóa</b> tài khoản này?";
+Swal.fire({
+  title: 'Xác nhận',
+  html: confirmMsg,
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonText: isLocked ? 'Mở khóa' : 'Khóa',
+  cancelButtonText: 'Hủy',
+  reverseButtons: true
+}).then(result => {
+  if (!result.isConfirmed) return;
+
+  // Gửi request nếu xác nhận
+  fetch('/api/user/lock', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId,
+      lock: !isLocked,
+      currentAdminId: parseInt(JSON.parse(localStorage.getItem('user'))?.id)
+    })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error(`Lỗi HTTP: ${res.status}`);
+      return res.json();
+    })
+    .then(result => {
+      if (result.success) {
+        Swal.fire('Thành công', 'Trạng thái tài khoản đã được cập nhật.', 'success');
+        loadUsers();
+      } else {
+        Swal.fire('Lỗi', result.error || 'Có lỗi xảy ra khi cập nhật.', 'error');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      Swal.fire('Lỗi', 'Không thể kết nối đến máy chủ.', 'error');
+    });
+});
 }
 // Tạo người dùng mới
 async function createUser() {
@@ -117,7 +186,44 @@ function loadProducts() {
       });
     });
 }
+function searchProducts() {
+  const keyword = document.getElementById('searchInput').value.trim();
 
+  if (!keyword) {
+    loadProducts();
+    return;
+  }
+
+  fetch(`/api/products/search?keyword=${encodeURIComponent(keyword)}`)
+    .then(res => res.json())
+    .then(products => {
+      const tbody = document.querySelector('#productTable tbody');
+      tbody.innerHTML = '';
+
+      if (products.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8">Không tìm thấy sản phẩm.</td></tr>';
+        return;
+      }
+
+      products.forEach((p, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.id}</td>
+            <td><img src="${p.image}" style="width:50px;"></td>
+            <td>${p.name}</td>
+            <td>${p.price}</td>
+            <td>${p.category}</td>
+            <td>${p.mota}</td>
+            <td><button onclick="deleteProduct(${p.id})">Xoá</button></td>
+            <td><button onclick="UpdateProduct(${p.id})">Sửa</button></td>
+          </tr>
+        `;
+      });
+    })
+    .catch(error => {
+      console.error('Lỗi tìm kiếm:', error);
+    });
+}
 
 let currentEditingId = null;
 
