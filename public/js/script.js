@@ -730,15 +730,6 @@ fetch('/api/products/promotions')
 
 });
   })
-  .catch(err => {
-    const promotionsEl = document.getElementById('promotion-list');
-    if (promotionsEl) promotionsEl.innerHTML = '<p>Lỗi khi tải sản phẩm khuyến mãi.</p>';
-    console.error('Lỗi khi gọi API khuyến mãi:', err);
-  });
-// Hàm định dạng tiền tệ
-function formatCurrency(amount) {
-  return Number(amount).toLocaleString('vi-VN') + 'đ';
-}
 // bot chat
 function toggleChat() {
   const chatBox = document.getElementById('chatContainer');
@@ -806,6 +797,7 @@ Giảm: ${promo.discount_percent}%<br>
     appendMessage('❌ Lỗi hệ thống!', 'bot');
   }
 }
+
 
 
 

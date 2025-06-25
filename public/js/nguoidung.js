@@ -161,3 +161,97 @@ function showPasswordForm(title) {
   });
 }
 
+
+  const user = JSON.parse(localStorage.getItem('user')); // Lấy từ localStorage khi login
+  const token = localStorage.getItem('token'); // nếu dùng JWT thì thêm Authorization
+
+  function fetchBalance() {
+    fetch('/api/coin/balance', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include' // Nếu dùng session (quan trọng!)
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('teacoin-balance').innerText = data.balance + ' coin';
+    })
+    .catch(err => {
+      document.getElementById('teacoin-balance').innerText = 'Lỗi tải dữ liệu';
+    });
+  }
+
+  function buyVoucher() {
+    const coinAmount = parseInt(document.getElementById('coinAmount').value);
+    if (!coinAmount || coinAmount <= 0) {
+      alert('Nhập số coin hợp lệ');
+      return;
+    }
+
+    fetch('/api/coin/buy-voucher', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ coinAmount })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById('voucher-result').innerText = data.error;
+      } else {
+        document.getElementById('voucher-result').innerHTML = `
+          🎉 Đổi voucher thành công! <br>
+          <strong>Mã:</strong> ${data.voucher.code} <br>
+          <strong>Giảm:</strong> ${data.voucher.discount}đ <br>
+          <strong>HSD:</strong> ${data.voucher.expiresAt}
+        `;
+        fetchBalance(); // cập nhật lại số dư
+      }
+    })
+    .catch(err => {
+      document.getElementById('voucher-result').innerText = 'Có lỗi xảy ra';
+    });
+  }
+
+  fetchBalance();
+   function loadBalance() {
+    fetch('/api/coin/balance', {
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('coinBalance').innerText = data.balance + ' coin';
+    })
+    .catch(() => {
+      document.getElementById('coinBalance').innerText = 'Không tải được 😢';
+    });
+  }
+
+  function claimDailyLogin() {
+    fetch('/api/coin/daily-login', {
+      method: 'POST',
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      const msgBox = document.getElementById('dailyLoginMessage');
+      if (data.error) {
+        msgBox.style.color = 'red';
+        msgBox.innerText = '❌ ' + data.error;
+      } else {
+        msgBox.style.color = 'green';
+        msgBox.innerText = '✅ ' + data.message;
+        loadBalance(); // Cập nhật lại số dư
+      }
+    })
+    .catch(() => {
+      document.getElementById('dailyLoginMessage').innerText = 'Đã có lỗi xảy ra 😢';
+    });
+  }
+
+  // Tải số dư khi vào trang
+  loadBalance();
+
+

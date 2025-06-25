@@ -22,6 +22,7 @@
       <li><a onclick="showSection('productSection')">Quản lý sản phẩm</a></li>
       <li><a onclick="showSection('orderSection')">Quản lý đơn hàng</a></li>
       <li><a onclick="showSection('promotionSection')">Quản lý khuyến mãi</a></li>
+      <li><a onclick="showSection('coinSection')">Quản lý TeaCoin</a></li>
       <li><a href="#" id="logoutBtn">Đăng xuất</a></li>
     </ul>
   </aside>
@@ -189,6 +190,17 @@
   <canvas id="revenueChart" width="100" height="50"></canvas>
   <canvas id="orderStatusChart" width="400" height="50"></canvas>
 </div>
+
+<div id="coinSection" style="display: none;">
+    <h2>💰 Quản lý TeaCoin</h2>
+    <label>User ID: <input id="coinUserId" type="number" /></label><br />
+    <label>Số coin: <input id="coinAmount" type="number" /></label><br />
+    <label>Ghi chú: <input id="coinDesc" type="text" /></label><br />
+    <button onclick="sendCoin()">Tặng Coin</button>
+    <div id="coinResult" style="margin-top:10px;color:green;"></div>
+  </div>
+</div>
+
   <script src="js/admin.js"></script>
 </body>
 </html>

@@ -22,18 +22,19 @@ async function loadUsers() {
             ${isLocked ? 'Đã khóa' : 'Hoạt động'}
           </span>
         </td>
-        <td>
-          ${
-            u.id === currentUserId
+        <td>${
+        u.role === 'admin'
+          ? '<i>Không thể hành động</i>'
+          : (u.id === currentUserId
               ? '<i>Không thể tự khóa</i>'
               : `<button onclick="toggleLock(${u.id}, ${isLocked})">
                   ${isLocked ? 'Mở khóa' : 'Khóa'}
-                </button>`
-          }
+                </button>`)}
         </td>
-        <td>
-          <button onclick="resetPassword(${u.id})">Reset Mật khẩu</button>
-          <button onclick="deleteUser(${u.id})">Xoá</button>
+        <td>${u.role === 'admin'
+          ? '<i>Không thể hành động</i>'
+          : `<button onclick="resetPassword(${u.id})">Reset Mật khẩu</button>
+          <button onclick="deleteUser(${u.id})">Xoá</button>`}
         </td>
       </tr>
     `;
@@ -285,14 +286,20 @@ async function submitUpdate() {
   const start_date = document.getElementById('editStartDate').value || null;
   const end_date = document.getElementById('editEndDate').value || null;
 // Kiểm tra tính hợp lệ của ngày
-    if (start_date && end_date) {
-    const start = new Date(start_date);
-    const end = new Date(end_date);
-    if (start >= end) {
-      alert(' Ngày bắt đầu phải nhỏ hơn ngày kết thúc.');
-      return;
-    }
+ if (start_date && end_date) {
+  const start = new Date(start_date);
+  const end = new Date(end_date);
+  if (start >= end) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ngày không hợp lệ',
+      text: 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc.',
+      confirmButtonText: 'OK'
+    });
+    return;
   }
+}
+
 
   const body = {
     name,
@@ -355,7 +362,7 @@ async function deleteProduct(id) {
 loadProducts();
 // menu 
 function showSection(sectionId) {
-  const sections = ['userSection', 'productSection', 'orderSection', 'promotionSection', 'reportSection'];
+  const sections = ['userSection', 'productSection', 'orderSection', 'promotionSection', 'reportSection', 'coinSection'];
 
   sections.forEach(id => {
     const el = document.getElementById(id);
@@ -690,6 +697,44 @@ function loadCharts() {
   renderOrderStatusChart();
   
 }
+// coin
+  function openCoinModal() {
+    document.getElementById("coinModal").style.display = "block";
+  }
+
+  function closeCoinModal() {
+    document.getElementById("coinModal").style.display = "none";
+    document.getElementById("coinResult").innerText = "";
+  }
+
+  async function sendCoin() {
+    const userId = document.getElementById("coinUserId").value;
+    const amount = document.getElementById("coinAmount").value;
+    const desc = document.getElementById("coinDesc").value;
+
+    const res = await fetch('/api/coin/admin/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: parseInt(userId), amount: parseInt(amount), description: desc })
+    });
+
+    const data = await res.json();
+    document.getElementById("coinResult").innerText = data.message || data.error;
+
+    if (data.message) {
+      document.getElementById("coinUserId").value = '';
+      document.getElementById("coinAmount").value = '';
+      document.getElementById("coinDesc").value = '';
+    }
+  }
+
+  // Close modal nếu click bên ngoài modal content
+  window.onclick = function(event) {
+    const modal = document.getElementById("coinModal");
+    if (event.target === modal) closeCoinModal();
+  }
+
+
 
 
 

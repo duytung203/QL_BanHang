@@ -12,6 +12,7 @@ const ReportRoutes = require('./routes/reports'); // routes cho việc báo cáo
 const paymentRoute = require('./routes/payment')(db);
 const chatbotRoutes = require('./routes/chatbot');
 const ordersRoute = require('./routes/orders');
+const coinRoutes = require('./routes/coin');
 
 require('dotenv').config();
 
@@ -32,12 +33,18 @@ app.use(session({
     maxAge: 3600000
   }
 }));
-
+app.use((req, res, next) => {
+  if (req.session && req.session.user) {
+    req.user = req.session.user;
+  }
+  next();
+});
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Thư mục chứa các tệp tĩnh như HTML, CSS, JS
 app.use('/api/payment', paymentRoute);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/orders', ordersRoute(db));
+app.use('/api/coin', coinRoutes);
 app.use('/api/reports', ReportRoutes); // đường dẫn API cho báo cáo thống kê
 app.use('/api/products', productRoutes); // Đường dẫn API cho sản phẩm
 app.use('/api/feedback', feedbackRoutes); // Đường dẫn API cho phản hồi

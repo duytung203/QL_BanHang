@@ -20,7 +20,7 @@ async function xacNhanThanhToan() {
 
   const params = new URLSearchParams(window.location.search);
   const orderId = parseInt(params.get('orderId'));
-  const amount = parseFloat(params.get('amount'));
+  const amount = window.finalAmount || parseFloat(params.get('amount'));
   const user = JSON.parse(localStorage.getItem('user'));
   const userId = user?.id ? parseInt(user.id) : null;
 
@@ -103,6 +103,57 @@ Swal.fire({
     console.error("❌ Lỗi:", err);
     alert("Đã xảy ra lỗi: " + err.message);
   }
+}
+// voucher
+function applyVoucher() {
+  const code = document.getElementById('voucherCode').value.trim();
+  const params = new URLSearchParams(window.location.search);
+  const totalPrice = parseFloat(params.get('amount'));
+
+  if (!code || isNaN(totalPrice)) {
+    Swal.fire('⚠️ Thiếu dữ liệu', 'Vui lòng nhập mã voucher hoặc thiếu giá trị thanh toán.', 'warning');
+    return;
+  }
+
+  fetch('/api/coin/apply-voucher', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, totalPrice })
+  })
+    .then(res => res.json())
+    .then(data => {
+      const result = document.getElementById('voucherResult');
+      const orderSummary = document.querySelector('.order-summary');
+
+      if (data.error) {
+        result.innerHTML = `<span style="color:red">${data.error}</span>`;
+      } else {
+        result.innerHTML = `
+          <span style="color:green">${data.message}</span><br>
+          <strong>Tổng còn lại: ${data.finalTotal.toLocaleString()}đ</strong>
+        `;
+
+        // ❌ Xoá phần hiển thị cũ nếu đã có
+        const existingDiscount = document.getElementById('voucherApplied');
+        if (existingDiscount) existingDiscount.remove();
+
+        // ✅ Thêm phần hiển thị mới
+        const discountInfo = document.createElement('div');
+        discountInfo.id = 'voucherApplied';
+        discountInfo.innerHTML = `
+          <p style="color:green">Đã áp dụng voucher giảm ${data.discount.toLocaleString()}đ</p>
+          <p><strong>Tổng thanh toán: ${data.finalTotal.toLocaleString()} VND</strong></p>
+        `;
+        orderSummary.appendChild(discountInfo);
+
+        // Cập nhật biến toàn cục
+        window.finalAmount = data.finalTotal;
+      }
+    })
+    .catch(err => {
+      console.error('Lỗi khi áp dụng voucher:', err);
+      Swal.fire('❌ Lỗi', 'Không thể áp dụng voucher, hãy thử lại.', 'error');
+    });
 }
 
 
