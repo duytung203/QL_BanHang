@@ -25,24 +25,26 @@ LIMIT 5;
 
 // Route lấy tất cả khuyến mãi (promotions)
 router.get('/promotions', (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
   const query = `
     SELECT p.*, 
-      p.price * (1 - pr.discount_percent / 100) AS discounted_price,
+      ROUND(p.price * (1 - pr.discount_percent / 100)) AS discounted_price,
       pr.discount_percent, pr.start_date, pr.end_date
     FROM products p
     JOIN promotions pr ON p.id = pr.product_id
-    WHERE CURDATE() BETWEEN pr.start_date AND pr.end_date
+    WHERE ? BETWEEN pr.start_date AND pr.end_date
   `;
 
-db.query(query, [today, today], (err, results) => {
-  if (err) {
-    console.error('Lỗi truy vấn khuyến mãi:', err);
+  db.query(query, [today], (err, results) => {
+    if (err) {
+      console.error('Lỗi truy vấn khuyến mãi:', err);
       return res.status(400).json({ error: err.message });
     }
-  res.json({ data: results });
+    res.json({ data: results });
   });
 });
+
 
 // Lấy danh sách khuyến mãi 
 router.get('/khuyenmai', (req, res) => {

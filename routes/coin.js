@@ -160,47 +160,63 @@ router.get('/history', (req, res) => {
   const userId = req.user?.id;
   if (!userId) return res.status(401).json({ error: 'Bạn chưa đăng nhập!' });
 
-const sql = `
-  SELECT 
-  t.amount, t.type, t.description, t.created_at,
-  v.code, v.expires_at, v.used_at, v.is_used
-FROM coin_transactions t
-LEFT JOIN vouchers v ON t.voucher_id = v.id
-WHERE t.user_id = ?
-ORDER BY t.created_at DESC
-LIMIT 50
-`;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
 
-db.query(sql, [userId], (err, rows) => {
-  if (err) return res.status(500).json({ error: err.message });
+  const countQuery = `SELECT COUNT(*) AS total FROM coin_transactions WHERE user_id = ?`;
+  const dataQuery = `
+    SELECT 
+      t.amount, t.type, t.description, t.created_at, 
+      v.code, v.expires_at, v.used_at
+    FROM coin_transactions t
+    LEFT JOIN vouchers v ON t.voucher_id = v.id
+    WHERE t.user_id = ?
+    ORDER BY t.created_at DESC
+    LIMIT ? OFFSET ?
+  `;
 
-  const now = new Date();
+  // 1. Đếm tổng số dòng
+  db.query(countQuery, [userId], (err, countRows) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-  const formatted = rows.map(tx => {
-  let status = null;
+    const total = countRows[0].total;
+    const totalPages = Math.ceil(total / limit);
 
-  if (tx.code) {
-    const isUsed = tx.is_used === 1;
-    const isExpired = tx.expires_at && new Date(tx.expires_at) < now;
+    // 2. Lấy dữ liệu trang hiện tại
+    db.query(dataQuery, [userId, limit, offset], (err2, rows) => {
+      if (err2) return res.status(500).json({ error: err2.message });
 
-    if (isUsed) status = 'Đã dùng';
-    else if (isExpired) status = 'Đã hết hạn';
-    else status = 'Chưa dùng';
-  }
+      const now = new Date();
 
-  return {
-    amount: tx.amount,
-    type: tx.type,
-    description: tx.description,
-    code: tx.code || null,
-    status,
-    created_at: new Date(tx.created_at).toLocaleString('vi-VN'),
-    isAdd: tx.amount > 0
-  };
-});
+      const history = rows.map(tx => {
+        let status = null;
+        if (tx.code) {
+          const isUsed = tx.used_at !== null;
+          const isExpired = tx.expires_at && new Date(tx.expires_at) < now;
+          if (isUsed) status = 'Đã dùng';
+          else if (isExpired) status = 'Đã hết hạn';
+          else status = 'Chưa dùng';
+        }
 
-  res.json({ history: formatted });
-});
+        return {
+          amount: tx.amount,
+          type: tx.type,
+          description: tx.description,
+          code: tx.code || null,
+          status,
+          created_at: new Date(tx.created_at).toLocaleString('vi-VN'),
+          isAdd: tx.amount > 0
+        };
+      });
+
+      res.json({
+        currentPage: page,
+        totalPages,
+        history
+      });
+    });
+  });
 });
 
 

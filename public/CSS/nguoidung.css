@@ -131,109 +131,95 @@ h2 {
 }
 
 .field {
-  margin-bottom: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  max-width: 600px;
+    margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .field:hover {
-  background-color: #f0f7f0;
+  background-color: #f1f3f5;
 }
 
 .field label {
-  font-weight: 600;
-  color: #333;
-  width: 150px; 
-  text-align: right;
-  margin-right: 20px;
+  font-weight: 500;
+  color: #555;
+  min-width: 100px;
+  flex-shrink: 0;
 }
 
-
 .field span[id$="-display"] {
-  flex: 1;
+  flex-grow: 1;
   padding: 8px 0;
-  color: #555;
-  text-align: left;
+  color: #333;
 }
 
 .field input {
-  flex: 1;
+  flex-grow: 1;
   padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-  display: none; 
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.3s;
 }
 
 .field input:focus {
+  border-color: #00a8e8;
   outline: none;
-  border-color: #2a5a3b;
-  box-shadow: 0 0 0 2px rgba(42, 90, 59, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 168, 232, 0.1);
 }
 
-
-.field .actions {
-  margin-left: 20px;
+.actions {
   display: flex;
   gap: 8px;
-  justify-content: flex-end;
+  margin-left: auto;
 }
 
-
-
-.field button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+button {
+  padding: 8px 16px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s;
+  border: none;
 }
 
-.field button:not([id^="save-"]):not([id^="cancel-"]) {
-  background-color: #2a5a3b;
+button[onclick^="editField"] {
+  background-color: #00a8e8;
   color: white;
 }
 
-.field button:not([id^="save-"]):not([id^="cancel-"]):hover {
-  background-color: #1d472b;
+button[onclick^="editField"]:hover {
+  background-color: #0095d9;
+  transform: translateY(-1px);
 }
 
-
-.field button[id^="save-"] {
-  background-color: #28a745;
+button[onclick^="saveField"] {
+  background-color: #4caf50;
   color: white;
-  display: none; 
+}
+button[onclick^="saveField"]:hover {
+  background-color: #3d8b40;
 }
 
-.field button[id^="save-"]:hover {
-  background-color: #218838;
-}
-
-
-.field button[id^="cancel-"] {
-  background-color: #dc3545;
+button[onclick^="cancelEdit"] {
+  background-color: #f44336;
   color: white;
-  display: none; 
 }
 
-.field button[id^="cancel-"]:hover {
-  background-color: #c82333;
+button[onclick^="cancelEdit"]:hover {
+  background-color: #d32f2f;
 }
-.account-info-container {
-  max-width: 800px; 
-  margin: 0 auto; 
-  padding: 20px;
+button:active {
+  transform: translateY(0);
 }
-.field button[id^="change-"]{
-  margin: auto;
-}
+
 
 .footer {
   background-color: #2a5a3b;
@@ -387,7 +373,7 @@ h2 {
 
 .password-form button[type="submit"] {
   background-color: #2a5a3b;
-  color: white;
+  color:white;
 }
 
 .password-form button[type="submit"]:hover {
@@ -403,5 +389,118 @@ h2 {
   background-color: #3d9e52;
 }
 
+#teacoin-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  padding: 24px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+#teacoin-container h3 {
+  color: #2a5a3b;
+  margin-bottom: 16px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#teacoin-balance, #coinBalance {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+#teacoin-container label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+#coinAmount {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+#coinAmount:focus {
+  border-color: #00a8e8;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 168, 232, 0.1);
+}
+
+#teacoin-container button {
+  background-color: #00a8e8;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+  transition: all 0.3s;
+}
+
+#teacoin-container button:hover {
+  background-color: #0095d9;
+  transform: translateY(-1px);
+}
+
+#teacoin-container button:active {
+  transform: translateY(0);
+}
+
+#voucher-result {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#daily-login {
+  background-color: #f5fff5;
+  margin-top: 20px;
+  padding: 16px;
+  border: 2px dashed #4caf50;
+  border-radius: 10px;
+}
+
+#daily-login h3 {
+  color: #4caf50;
+  margin-top: 0;
+}
+
+#dailyLoginBtn {
+  background-color: #4caf50;
+  margin-top: 12px;
+}
+
+#dailyLoginBtn:hover {
+  background-color: #3d8b40;
+}
+
+#dailyLoginMessage {
+  color: #666;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Animation khi nhận coin */
+@keyframes coinBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+#dailyLoginBtn:active {
+  animation: coinBounce 0.3s;
+}
 
 

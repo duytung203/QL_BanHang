@@ -75,11 +75,20 @@ function renderProducts(page = 1) {
   renderPagination();
 }
 
-// Hàm hiển thị phân trang
 function renderPagination() {
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
+
   const totalPages = Math.ceil(currentProductList.length / productsPerPage);
+
+  // Nút Previous
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "<";
+  prevBtn.disabled = currentPage === 1;
+  prevBtn.onclick = () => renderProducts(currentPage - 1);
+  pagination.appendChild(prevBtn);
+
+  // Các nút số trang
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
@@ -87,7 +96,15 @@ function renderPagination() {
     btn.onclick = () => renderProducts(i);
     pagination.appendChild(btn);
   }
+
+  // Nút Next
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = ">";
+  nextBtn.disabled = currentPage === totalPages;
+  nextBtn.onclick = () => renderProducts(currentPage + 1);
+  pagination.appendChild(nextBtn);
 }
+
 // Hàm chuyển hướng đến giỏ hàng
  function goToCart() {
   const token = localStorage.getItem('token');
@@ -730,6 +747,13 @@ fetch('/api/products/promotions')
 
 });
   })
+  function formatCurrency(amount, locale = 'vi-VN', currency = 'VND') {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency
+  }).format(amount);
+}
+
 // bot chat
 function toggleChat() {
   const chatBox = document.getElementById('chatContainer');

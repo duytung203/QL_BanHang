@@ -81,6 +81,8 @@
     <!-- Dữ liệu sẽ được JS đổ vào đây -->
   </tbody>
 </table>
+<!-- nơi hiển thị phân trang -->
+<div id="pagination" class="text-center mt-3"></div>
 
 
 <script>
@@ -218,47 +220,59 @@ document.getElementById('export-btn').addEventListener('click', () => {
     }
   });
 });
+// coin history
+let currentPage = 1;
+const limit = 10;
 
-fetch('/api/coin/history')
-  .then(res => res.json())
-  .then(data => {
-    const tbody = document.getElementById('historyTableBody');
-    tbody.innerHTML = '';
+function loadHistory(page = 1) {
+  fetch(`/api/coin/history?page=${page}&limit=${limit}`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
 
-    data.history.forEach((tx, index) => {
-      const tr = document.createElement('tr');
+      data.history.forEach((tx, index) => {
+        const tr = document.createElement('tr');
+        const color = tx.isAdd ? 'text-success' : 'text-danger';
+        const sign = tx.isAdd ? '+' : '';
+        tr.innerHTML = `
+          <td>${(page - 1) * limit + index + 1}</td>
+          <td class="${color} fw-bold">${sign}${tx.amount}</td>
+          <td><span class="badge bg-secondary">${tx.type}</span></td>
+          <td>${tx.description}</td>
+          <td>${tx.code ? `<code>${tx.code}</code>` : ''}</td>
+          <td>
+            ${tx.status ? `<span class="badge ${
+              tx.status === 'Chưa dùng' ? 'bg-success' :
+              tx.status === 'Đã dùng' ? 'bg-secondary' :
+              'bg-danger'
+            }">${tx.status}</span>` : ''}
+          </td>
+          <td><small>${tx.created_at}</small></td>
+        `;
+        tbody.appendChild(tr);
+      });
 
-      const color = tx.amount > 0 ? 'text-success' : 'text-danger';
-      const sign = tx.amount > 0 ? '+' : '';
-
-      tr.innerHTML = `
-  <td>${index + 1}</td>
-  <td class="${color} fw-bold">${sign}${tx.amount}</td>
-  <td><span class="badge bg-secondary">${tx.type}</span></td>
-  <td>${tx.description}</td>
-  <td>${tx.code ? `<code>${tx.code}</code>` : ''}</td>
-  <td>${tx.discount_value ? `${tx.discount_value.toLocaleString()}đ` : ''}</td>
-  <td>${tx.expires_at ? new Date(tx.expires_at).toLocaleString() : ''}</td>
-  <td>
-    ${
-      tx.status ? `<span class="badge ${
-        tx.status === 'Chưa dùng' ? 'bg-success' :
-        tx.status === 'Đã dùng' ? 'bg-secondary' :
-        'bg-danger'
-      }">${tx.status}</span>` : ''
-    }
-  </td>
-  <td><small>${tx.created_at}</small></td>
-`;
-
-      tbody.appendChild(tr);
+      // Update phân trang
+      renderPagination(data.currentPage, data.totalPages);
     });
-  })
-  .catch(err => {
-    console.error("Lỗi load lịch sử coin:", err);
-    document.getElementById('historyTableBody').innerHTML =
-      `<tr><td colspan="7" class="text-center text-danger">⚠️ Không thể tải lịch sử giao dịch.</td></tr>`;
-  });
+}
+
+function renderPagination(current, total) {
+  const container = document.getElementById('pagination');
+  container.innerHTML = '';
+
+  for (let i = 1; i <= total; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = `btn btn-sm ${i === current ? 'btn-primary' : 'btn-outline-primary'} mx-1`;
+    btn.onclick = () => loadHistory(i);
+    container.appendChild(btn);
+  }
+}
+// Gọi lần đầu
+loadHistory();
+
 
 </script>
 <footer class="footer">
