@@ -174,5 +174,18 @@ router.post('/lock', async (req, res) => {
   }
 });
 
+router.get('/search', (req, res) => {
+  const keyword = req.query.keyword || '';
+  const query = `
+    SELECT * FROM users 
+    WHERE username LIKE ? OR email LIKE ?
+  `;
+  const like = `%${keyword}%`;
+
+  db.query(query, [like, like], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Lỗi server' });
+    res.json(results);
+  });
+});
 return router;
 };

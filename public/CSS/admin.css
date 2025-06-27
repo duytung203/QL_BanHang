@@ -198,6 +198,82 @@ th, td {
   cursor: pointer;
 }
 
+#coinSection {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeIn 0.5s ease-out;
+}
+
+#coinSection h2 {
+  color: #2a5a3b;
+  margin-bottom: 20px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#coinSection label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: 500;
+  color: #555;
+}
+
+#coinSection input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+#coinSection input:focus {
+  border-color: #00a8e8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.1);
+}
+
+#coinSection button {
+  background-color: #00a8e8;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+#coinSection button:hover {
+  background-color: #0095d9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#coinSection button:active {
+  transform: translateY(0);
+}
+
+#coinResult {
+  padding: 10px;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+
+
 
 
 

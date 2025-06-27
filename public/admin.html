@@ -56,6 +56,9 @@
       <tbody></tbody>
     </table>
   </div>
+      <input type="text" id="searchUserInput" class="search-box" placeholder="Tìm kiếm người dùng...">
+      <button onclick="searchUser()">🔍 Tìm kiếm</button>
+      <button onclick="loadUsers()">🔄 Tải lại tất cả</button>
 </div>
 
 <!-- Nội dung quản lý sản phẩm -->
@@ -192,13 +195,26 @@
 </div>
 
 <div id="coinSection" style="display: none;">
-    <h2>💰 Quản lý TeaCoin</h2>
-    <label>User ID: <input id="coinUserId" type="number" /></label><br />
-    <label>Số coin: <input id="coinAmount" type="number" /></label><br />
-    <label>Ghi chú: <input id="coinDesc" type="text" /></label><br />
-    <button onclick="sendCoin()">Tặng Coin</button>
-    <div id="coinResult" style="margin-top:10px;color:green;"></div>
-  </div>
+  <h2>💰 Quản lý TeaCoin</h2>
+  
+  <label>
+    User ID:
+    <input id="coinUserId" type="number" placeholder="Nhập ID người nhận" />
+  </label>
+  
+  <label>
+    Số coin:
+    <input id="coinAmount" type="number" placeholder="Nhập số lượng coin" min="1" />
+  </label>
+  
+  <label>
+    Ghi chú:
+    <input id="coinDesc" type="text" placeholder="Lý do tặng coin (nếu có)" />
+  </label>
+  
+  <button onclick="sendCoin()">🎁 Tặng Coin</button>
+  
+  <div id="coinResult"></div>
 </div>
 
   <script src="js/admin.js"></script>

@@ -122,6 +122,44 @@ async function resetPassword(id) {
 }
 loadUsers();
 
+function searchUser() {
+  const keyword = document.getElementById('searchUserInput').value.trim();
+  if (!keyword) return;
+
+  fetch(`/api/user/search?keyword=${encodeURIComponent(keyword)}`)
+    .then(res => res.json())
+    .then(data => {
+      renderUsers(data); // Hàm render lại danh sách
+    })
+    .catch(err => console.error('Lỗi tìm user:', err));
+}
+function renderUsers(users) {
+  const tbody = document.querySelector('#userTable tbody');
+  tbody.innerHTML = '';
+  users.forEach(u => {
+    const status = u.is_locked ? 'Đang bị khóa' : 'Hoạt động';
+    const statusColor = u.is_locked ? 'red' : 'green';
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${u.id}</td>
+        <td>${u.username}</td>
+        <td>${u.email}</td>
+        <td>${u.role}</td>
+        <td style="color:${statusColor}">${status}</td>
+        <td>
+          <button onclick="toggleLock(${u.id}, ${u.is_locked})">${u.is_locked ? 'Mở khóa' : 'Khóa'}</button>
+        </td>
+        <td>
+          <button onclick="resetPassword(${u.id})">Reset Mật khẩu</button>
+          <button onclick="deleteUser(${u.id})">Xoá</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
