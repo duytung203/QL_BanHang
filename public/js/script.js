@@ -822,6 +822,18 @@ Giảm: ${promo.discount_percent}%<br>
   }
 }
 
+  function toggleHamburger() {
+  const nav = document.getElementById('mainNav');
+  const icon = document.querySelector('.hamburger');
+  nav.classList.toggle('active');
+  icon.textContent = nav.classList.contains('active') ? '✖' : '☰';
+}
+document.querySelectorAll('.main-nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('mainNav').classList.remove('active');
+    document.querySelector('.hamburger').textContent = '☰';
+  });
+});
 
 
 

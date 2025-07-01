@@ -11,37 +11,42 @@
 </head>
 <body> 
   <!-- Header -->
-   <header class="main-header" role="banner">
+ <header class="main-header" role="banner">
   <div class="header-content">
     <div class="logo" aria-label="Thanh Tra Tea">THANH TRA TEA</div>
-    <div>
-      <nav class="main-nav" aria-label="Main navigation">
-        <ul>
-          <li><a href="index.html">Trang chủ</a></li>
-          <li><a href="#" id="menu-coffee">Coffee</a></li>
-          <li><a href="#" id="menu-tea">Trà</a></li>
-          <li class="menuchinh" aria-haspopup="true" aria-expanded="false">
-            <a>Menu</a>
-            <ul class="menuphu" role="menu">
-              <li><a href="#" id="menu-all" >Tất cả</a></li>
-              <li><a href="#" id="menu-banh" >Bánh ngọt</a></li>
-              <li><a href="#" id="menu-anvat" >Đồ ăn vặt</a></li>
-            </ul>
-          </li>
-          <li><a href="tintuc.html">Tin tức</a></li>
-          <li><a href="tuyendung.html">Tuyển dụng</a></li>
-        </ul>
-      </nav>
-      <!-- User Menu đăng nhập và giỏ hàng -->
-      <div id="userMenu"> 
-        <button class="login-btn" onclick="toggleModal(true)" aria-label="Đăng nhập">Đăng nhập</button>
-        <button class="cart-btn" onclick="goToCart()" aria-label="🛒Giỏ hàng">
-         Giỏ hàng (<span id="cart-count" aria-live="polite">0</span>)
-        </button>
-      </div>     
+    <div class="hamburger" onclick="toggleHamburger()" aria-label="Mở menu">&#9776;</div>
+    <nav class="main-nav" aria-label="Main navigation" id="mainNav">
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="#" id="menu-coffee">Coffee</a></li>
+        <li><a href="#" id="menu-tea">Trà</a></li>
+        <li class="menuchinh" aria-haspopup="true" aria-expanded="false">
+          <a>Menu</a>
+          <ul class="menuphu" role="menu">
+            <li><a href="#" id="menu-all">Tất cả</a></li>
+            <li><a href="#" id="menu-banh">Bánh ngọt</a></li>
+            <li><a href="#" id="menu-anvat">Đồ ăn vặt</a></li>
+          </ul>
+        </li>
+        <li><a href="tintuc.html">Tin tức</a></li>
+        <li><a href="tuyendung.html">Tuyển dụng</a></li>
+
+        <li class="mobile-only">
+        <button class="login-btn" onclick="toggleModal(true)">Đăng nhập</button></li>
+       <li class="mobile-only">
+        <button class="cart-btn" onclick="goToCart()">Giỏ hàng (<span id="cart-count">0</span>)</button></li>
+      </ul>
+    </nav>
+    <!-- User Menu -->
+    <div id="userMenu"> 
+      <button class="login-btn" onclick="toggleModal(true)" aria-label="Đăng nhập">Đăng nhập</button>
+      <button class="cart-btn" onclick="goToCart()" aria-label="🛒Giỏ hàng">
+        Giỏ hàng (<span id="cart-count" aria-live="polite">0</span>)
+      </button>
     </div>
   </div>
 </header>
+
 <!-- Banner -->
 <div class="wrapper">
 <div class="banner-container">
