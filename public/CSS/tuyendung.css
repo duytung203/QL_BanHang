@@ -1,16 +1,15 @@
-
-* {
+  * {
   margin: 0;
+  padding: 0;
   box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-  font-family: 'Arial', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  margin: 0 auto;
   background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -166,7 +165,6 @@ strong {
   color: #fff;
   padding: 50px 0 20px;
   margin-top: 50px;
-  
 }
 
 .footer-container {
@@ -262,4 +260,141 @@ strong {
 
 .newsletter button:hover {
   background-color: #c8e6c9;
+}
+
+.tips-section a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.tips-section a:hover {
+  color: #4caf50;
+  text-decoration: underline;
+}
+.story-content a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.story-content a:hover {
+  color: #4caf50;
+  text-decoration: underline;
+}
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+  z-index: 9999 !important;
+  position: relative;
+}
+.mobile-only {
+  display: none;
+}
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+ .main-nav {
+  position: fixed;
+  top: 109px;
+  right: 0;
+  width: 75vw;
+  background: white;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  padding: 0px 20px 30px;
+  overflow-y: auto;
+}
+
+.main-nav.open {
+  transform: translateX(0);
+}
+.main-nav.active {
+  transform: translateX(0%);
+}
+
+.main-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+  .main-nav li {
+    margin: 10px 0;
+  }
+
+  .header-content {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #userMenu {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  .footer {
+    padding: 30px 0 15px;
+    text-align: center;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .contact-item {
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .newsletter input,
+  .newsletter button {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .newsletter h3 {
+    font-size: 16px;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
+  .footer-bottom {
+    font-size: 12px;
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .newsletter input,
+  .newsletter button {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .social-links a {
+    font-size: 18px;
+  }
+
+  .contact-item i {
+    font-size: 18px;
+  }
+
+  .contact-item a {
+    font-size: 14px;
+  }
 }

@@ -324,16 +324,16 @@ button:active {
 }
 
 .password-form {
-      position: fixed;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      z-index: 9999;
-      min-width: 300px;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  min-width: 300px;
 }
 
 .password-form label {
@@ -503,4 +503,153 @@ button:active {
   animation: coinBounce 0.3s;
 }
 
+@media (max-width: 768px) {
+  .footer {
+    padding: 30px 0 15px;
+    text-align: center;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .contact-item {
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .newsletter input,
+  .newsletter button {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .newsletter h3 {
+    font-size: 16px;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
+  .footer-bottom {
+    font-size: 12px;
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .newsletter input,
+  .newsletter button {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .social-links a {
+    font-size: 18px;
+  }
+
+  .contact-item i {
+    font-size: 18px;
+  }
+
+  .contact-item a {
+    font-size: 14px;
+  }
+}
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+  z-index: 9999 !important;
+  position: relative;
+}
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+ .main-nav {
+  position: fixed;
+  top: 88px;
+  right: 0;
+  width: 75vw;
+  background: white;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  padding: 0px 20px 30px;
+  overflow-y: auto;
+}
+
+.main-nav.open {
+  transform: translateX(0);
+}
+.main-nav.active {
+  transform: translateX(0%);
+}
+
+.main-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+  .main-nav li {
+    margin: 10px 0;
+  }
+
+  .header-content {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #userMenu {
+    display: none;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .mobile-only {
+    display: block;
+    margin-top: 10px;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+ .main-nav ul li button {
+    width: 62%;
+    padding: 10px 20px;
+    background: #f3f3f3;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;   
+    color: #2a5a3b;
+    margin: 6px 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: background 0.3s ease;
+  }
+
+  .main-nav ul li button:hover {
+    background-color: #c8e6c9;
+    color: #1b4d2c;
+  }
+}
 

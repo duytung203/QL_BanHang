@@ -59,22 +59,38 @@ function checkout() {
     body: JSON.stringify({ cart: simplifiedCart })
   })
     .then(res => res.json())
-    .then(data => {
-      if (data.error || data.message?.includes('Lỗi')) {
-        alert(data.message || "Đã có lỗi xảy ra!");
-        return;
-      }
-
-      alert(data.message || "Đặt hàng thành công!");
-      localStorage.removeItem("cart");
-      cart = [];
-      renderCart();
-      location.reload();
-    })
-    .catch(err => {
-      console.error("Lỗi hệ thống:", err);
-      alert("Đặt hàng thất bại. Vui lòng thử lại sau.");
+.then(data => {
+  if (data.error || data.message?.includes('Lỗi')) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Lỗi!',
+      text: data.message || "Đã có lỗi xảy ra!",
+      confirmButtonText: 'OK'
     });
+    return;
+  }
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Thành công!',
+    text: data.message || "Đặt hàng thành công!",
+    confirmButtonText: 'OK'
+  }).then(() => {
+    localStorage.removeItem("cart");
+    cart = [];
+    renderCart();
+    location.reload();
+  });
+})
+.catch(err => {
+  console.error("Lỗi hệ thống:", err);
+  Swal.fire({
+    icon: 'error',
+    title: 'Lỗi hệ thống!',
+    text: "Đặt hàng thất bại. Vui lòng thử lại sau.",
+    confirmButtonText: 'OK'
+  });
+});
 }
 
 
@@ -175,6 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
   window.location.href = query;
 }
 
-
+  function toggleHamburger() {
+  const nav = document.getElementById('mainNav');
+  const icon = document.querySelector('.hamburger');
+  nav.classList.toggle('active');
+  icon.textContent = nav.classList.contains('active') ? '✖' : '☰';
+}
 
 window.onload = renderCart;

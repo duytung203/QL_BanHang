@@ -12,8 +12,8 @@
 <div class="wrapper">
   <div class="header-content">
     <div class="logo" aria-label="Thanh Tra Tea">THANH TRA TEA</div>
-    <div>
-      <nav class="main-nav" aria-label="Main navigation">
+    <div class ="hamburger" onclick="toggleHamburger()" aria-label="Mở menu">&#9776;</div>
+      <nav class="main-nav" aria-label="Main navigation" id="mainNav">
         <ul>
           <li><a href="index.html">Trang chủ</a></li>
           <li><a href="#" id="menu-coffee">Coffee</a></li>
@@ -30,8 +30,6 @@
         </ul>
       </nav>    
     </div>
-  </div>
-
   <div class="order-history">
   <h2>Lịch sử giao dịch của <span id="username-display"></span></h2>
   <table id="order-table">
@@ -273,7 +271,12 @@ function renderPagination(current, total) {
 // Gọi lần đầu
 loadHistory();
 
-
+  function toggleHamburger() {
+  const nav = document.getElementById('mainNav');
+  const icon = document.querySelector('.hamburger');
+  nav.classList.toggle('active');
+  icon.textContent = nav.classList.contains('active') ? '✖' : '☰';
+}
 </script>
 <footer class="footer">
   <div class="footer-container">

@@ -225,7 +225,13 @@ async function loadRelatedProducts(id) {
     console.error('Lỗi tải sản phẩm liên quan:', error);
   }
 }
-
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
 if (productId) loadRelatedProducts(productId);
+
+  function toggleHamburger() {
+  const nav = document.getElementById('mainNav');
+  const icon = document.querySelector('.hamburger');
+  nav.classList.toggle('active');
+  icon.textContent = nav.classList.contains('active') ? '✖' : '☰';
+}

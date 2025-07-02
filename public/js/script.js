@@ -400,23 +400,40 @@ function updateUserMenu() {
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
 
-  const userMenu = document.getElementById('userMenu');
-  if (token && user?.username && userMenu) {
-    userMenu.innerHTML = `
-      <div class="dropdown">
-        <button class="dropbtn" onclick="toggleUserMenu()">Xin chào ${user.username}</button>
-        <div class="dropdown-content" id="userDropdown">
-          <a href="nguoidung.html" target="_blank">Thông tin người dùng</a>
-          <a href="history.html">Lịch sử giao dịch</a>
-          <a href="#" onclick="logout()">Đăng xuất</a>
+  const userMenu = document.getElementById('userMenu'); // desktop
+  const mobileLogin = document.querySelector('.mobile-login'); // thêm class này trong nav mobile
+
+  if (token && user?.username) {
+    if (userMenu) {
+      userMenu.innerHTML = `
+        <div class="dropdown">
+          <button class="dropbtn" onclick="toggleUserMenu()">Xin chào ${user.username}</button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="nguoidung.html" target="_blank">Thông tin người dùng</a>
+            <a href="history.html">Lịch sử giao dịch</a>
+            <a href="#" onclick="logout()">Đăng xuất</a>
+          </div>
         </div>
-      </div>
-      <button class="cart-btn" onclick="goToCart()">🛒Giỏ hàng (<span id="cart-count">0</span>)</button>
-    `;
+        <button class="cart-btn" onclick="goToCart()">🛒Giỏ hàng (<span id="cart-count">0</span>)</button>
+      `;
+    }
+
+   if (mobileLogin) {
+      mobileLogin.innerHTML = `
+        <p style="font-weight:bold;">👋 Xin chào <strong>${user.username}</strong></p>
+        <ul style="list-style:none; padding:0;">
+          <li><a href="nguoidung.html">👤 Thông tin người dùng</a></li>
+          <li><a href="history.html">📄 Lịch sử giao dịch</a></li>
+          <li><a href="#" onclick="logout()">🚪 Đăng xuất</a></li>
+        </ul>
+      `;
+    }
+
     const modal = document.getElementById('loginModal');
     if (modal) toggleModal(false);
   }
 }
+
 
 // Hàm hiển thị menu người dùng
 function toggleUserMenu() {

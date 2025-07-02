@@ -250,7 +250,13 @@ function showPasswordForm(title) {
       document.getElementById('dailyLoginMessage').innerText = 'Đã có lỗi xảy ra 😢';
     });
   }
-
+  
+  function toggleHamburger() {
+  const nav = document.getElementById('mainNav');
+  const icon = document.querySelector('.hamburger');
+  nav.classList.toggle('active');
+  icon.textContent = nav.classList.contains('active') ? '✖' : '☰';
+}
   // Tải số dư khi vào trang
   loadBalance();
 

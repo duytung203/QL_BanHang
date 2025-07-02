@@ -1278,7 +1278,7 @@ button[onclick="register()"]:hover {
 .mobile-only {
   display: none;
 }
-/* Mobile mode */
+
 @media (max-width: 768px) {
   .hamburger {
     display: block;
@@ -1286,7 +1286,7 @@ button[onclick="register()"]:hover {
 
  .main-nav {
   position: fixed;
-  top: 78px;
+  top: 88px;
   right: 0;
   width: 75vw;
   background: white;
@@ -1328,12 +1328,12 @@ button[onclick="register()"]:hover {
     display: none;
   }
 }
-/* Mặc định ẩn các mục mobile-only */
+
 .mobile-only {
   display: none;
 }
 
-/* Hiện ở mobile */
+
 @media (max-width: 767px) {
   .mobile-only {
     display: block;
