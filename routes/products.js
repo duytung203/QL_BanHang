@@ -218,32 +218,52 @@ router.get('/:id', (req, res) => {
       error: 'ID sản phẩm phải là số nguyên dương' 
     });
   }
-  const sql = 'SELECT * FROM products WHERE id = ?';
+
+  const sql = `
+    SELECT 
+      p.*, 
+      pr.discount_percent, 
+      pr.start_date, 
+      pr.end_date,
+      (p.price * (1 - IFNULL(pr.discount_percent, 0) / 100)) AS discounted_price
+    FROM products p
+    LEFT JOIN promotions pr 
+      ON p.id = pr.product_id 
+     AND CURDATE() BETWEEN pr.start_date AND pr.end_date
+    WHERE p.id = ?
+  `;
+
   db.query(sql, [id], (err, results) => {
     if (err) {
       console.error('MySQL Error:', err);
       return res.status(500).json({ 
         success: false,
-        error: 'Database error',
+        error: 'Lỗi truy vấn cơ sở dữ liệu',
         message: process.env.NODE_ENV === 'development' ? err.message : undefined
       });
     } 
+
     if (results.length === 0) {
       return res.status(404).json({ 
         success: false,
         error: `Không tìm thấy sản phẩm với ID ${id}` 
       });
-    }   
+    }
+
     const product = {
       ...results[0],
-      price: parseFloat(results[0].price)
+      price: parseFloat(results[0].price),
+      discounted_price: results[0].discounted_price ? parseFloat(results[0].discounted_price) : null,
+      discount_percent: results[0].discount_percent || 0
     };
+
     res.json({
       success: true,
       data: product
     });
   });
 });
+
 
 //them san pham
 router.post('/add', (req, res) => {

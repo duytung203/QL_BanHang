@@ -1,3 +1,5 @@
+let selectedProduct = null;
+
 document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const idParam = params.get('id');
@@ -33,11 +35,11 @@ async function fetchProductDetail(id) {
 // Hàm hiển thị chi tiết sản phẩm
 function renderProduct(product) {
   const productContainer = document.getElementById("product-detail");
-
+  const hasDiscount = product.discounted_price && parseFloat(product.discounted_price) < parseFloat(product.price);
   const formattedProduct = {
     name: product.name || 'Tên sản phẩm không có',
-    price: product.price ? formatPrice(product.price) : 'Liên hệ',
-    originalPrice: product.originalPrice ? formatPrice(product.originalPrice) : null,
+    price: hasDiscount ? formatPrice(product.discounted_price) : formatPrice(product.price),
+    originalPrice: hasDiscount ? formatPrice(product.price) : null,
     image: product.image || '/images/default-drink.jpg',
     description: product.mota || "Không có mô tả chi tiết.",
     rating: product.rating || 0,
@@ -63,32 +65,32 @@ function renderProduct(product) {
       <div class="back-container">
         <a href="/" class="back-button">← Quay lại trang chủ</a>
       </div>
-      
+
       <h1 class="product-title">${formattedProduct.name}</h1>
-      
+
       <div class="rating">
         ${'★'.repeat(Math.round(formattedProduct.rating))} 
         (${formattedProduct.reviewCount} đánh giá)
       </div>
-      
+
       <div class="product-image-container">
         <img src="${formattedProduct.image}" 
              alt="${formattedProduct.name}" 
              class="product-image"
              onerror="this.onerror=null;this.src='/images/default-drink.jpg'">
       </div>
-      
+
       <div class="price-container">
         <span class="current-price">${formattedProduct.price}</span>
         ${formattedProduct.originalPrice ? `<span class="original-price">${formattedProduct.originalPrice}</span>` : ''}
         <div class="delivery-badge">GIAO TRONG ${formattedProduct.deliveryTime}</div>
       </div>
-      
+
       ${promotionsHTML}
-      
+
       <div class="product-info">
         <div class="description">${formattedProduct.description}</div>
-        
+
         <div class="accessories">
           <p>Kèm theo: ${formattedProduct.includes.join(', ')}</p>
           <p>Bảo hành chất lượng 100%</p>
@@ -111,81 +113,168 @@ function renderProduct(product) {
       </div>
     </div>
   `;
+  // Sau khi render xong giao diện sản phẩm
+const confirmBtn = document.getElementById("confirmAdd");
+const cancelBtn = document.getElementById("cancelAdd");
 
-  let selectedProduct = null;
-  // Kiểm tra xem người dùng đã đăng nhập hay chưa
+if (confirmBtn) {
+  confirmBtn.addEventListener("click", () => {
+    const quantity = parseInt(document.getElementById("quantityInput").value);
+
+    if (isNaN(quantity) || quantity <= 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: '⚠️ Số lượng không hợp lệ',
+        text: 'Số lượng phải lớn hơn 0',
+      });
+      return;
+    }
+
+    if (!window.selectedProduct) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Không xác định sản phẩm',
+        text: 'Vui lòng chọn lại sản phẩm.'
+      });
+      return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const index = cart.findIndex(item => item.id === selectedProduct.id);
+
+    if (index !== -1) {
+      cart[index].quantity += quantity;
+    } else {
+      selectedProduct.quantity = quantity;
+      cart.push(selectedProduct);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount?.();
+
+    Swal.fire({
+      icon: 'success',
+      title: '🛒 Đã thêm vào giỏ hàng!',
+      html: `Sản phẩm: <b>${selectedProduct.name}</b><br>Số lượng: <b>${quantity}</b>`,
+      confirmButtonText: 'Xem giỏ hàng',
+      showCancelButton: true,
+      cancelButtonText: 'Tiếp tục mua sắm'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "giohang.html";
+      } else {
+        document.getElementById("quantityModal").style.display = "none";
+      }
+    });
+  });
+}
+
+if (cancelBtn) {
+  cancelBtn.addEventListener("click", () => {
+    document.getElementById("quantityModal").style.display = "none";
+  });
+}
+
+
+  // Sự kiện khi click nút thêm giỏ
   document.addEventListener("click", function (e) {
     if (e.target.classList.contains("add-to-cart-btn")) {
-   const token = localStorage.getItem("token");
-if (!token) {
-  Swal.fire({
-    icon: 'info',
-    title: '🛒 Cần đăng nhập',
-    text: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!',
-    confirmButtonText: 'Đăng nhập ngay',
-    showCancelButton: true,
-    cancelButtonText: 'Hủy',
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#aaa'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      window.location.href = "index.html";
-    }
-  });
-  return;
-}}
-    if (e.target.classList.contains("add-to-cart-btn")) {
-      selectedProduct = {
-        id: product.id,
-        name: formattedProduct.name,
-        price: product.price,
-        image: formattedProduct.image
-      };
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        Swal.fire({
+          icon: 'info',
+          title: '🛒 Cần đăng nhập',
+          text: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!',
+          confirmButtonText: 'Đăng nhập ngay',
+          showCancelButton: true,
+          cancelButtonText: 'Hủy',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#aaa'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "index.html";
+          }
+        });
+        return;
+      }
+
+     selectedProduct = {
+  id: product.id,
+  name: formattedProduct.name,
+  price: hasDiscount ? parseFloat(product.discounted_price) : parseFloat(product.price),
+  image: formattedProduct.image
+};
+
       document.getElementById("quantityModal").style.display = "flex";
     }
   });
-// Xử lý sự kiện khi người dùng nhấn nút "Thêm vào giỏ hàng"
-document.getElementById("confirmAdd").addEventListener("click", () => {
-  const quantity = parseInt(document.getElementById("quantityInput").value);
-
-  if (isNaN(quantity) || quantity <= 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: '⚠️ Số lượng không hợp lệ',
-      text: 'Số lượng phải lớn hơn 0',
-    });
-    return;
-  }
-
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const existingIndex = cart.findIndex(item => item.id === selectedProduct.id);
-  if (existingIndex >= 0) {
-    cart[existingIndex].quantity += quantity;
-  } else {
-    selectedProduct.quantity = quantity;
-    cart.push(selectedProduct);
-  }
-
-  localStorage.setItem('cart', JSON.stringify(cart));
-  Swal.fire({
-    icon: 'success',
-    title: '🛒 Đã thêm vào giỏ hàng!',
-    html: `Sản phẩm: <b>${selectedProduct.name}</b><br>Số lượng: <b>${quantity}</b>`,
-    confirmButtonText: 'Xem giỏ hàng',
-    showCancelButton: true,
-    cancelButtonText: 'Tiếp tục mua sắm'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      window.location.href = "giohang.html";
-    } else {
-      window.location.href = "index.html";
-    }
-  });
-});
-document.getElementById("cancelAdd").addEventListener("click", () => {
-  document.getElementById("quantityModal").style.display = "none";
-});
 }
+
+// Xử lý sự kiện khi người dùng nhấn nút "Thêm vào giỏ hàng"
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmBtn = document.getElementById("confirmAdd");
+  const cancelBtn = document.getElementById("cancelAdd");
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener("click", () => {
+      const quantity = parseInt(document.getElementById("quantityInput").value);
+
+      if (isNaN(quantity) || quantity <= 0) {
+        Swal.fire({
+          icon: 'warning',
+          title: '⚠️ Số lượng không hợp lệ',
+          text: 'Số lượng phải lớn hơn 0',
+        });
+        return;
+      }
+      if (!window.selectedProduct) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Không xác định sản phẩm',
+          text: 'Vui lòng chọn lại sản phẩm để thêm vào giỏ hàng.'
+        });
+        return;
+      }
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existingIndex = cart.findIndex(item => item.id === selectedProduct.id);
+
+      if (existingIndex >= 0) {
+        cart[existingIndex].quantity += quantity;
+      } else {
+        selectedProduct.quantity = quantity;
+        cart.push(selectedProduct);
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount?.();
+
+      Swal.fire({
+        icon: 'success',
+        title: '🛒 Đã thêm vào giỏ hàng!',
+        html: `Sản phẩm: <b>${selectedProduct.name}</b><br>Số lượng: <b>${quantity}</b>`,
+        confirmButtonText: 'Xem giỏ hàng',
+        showCancelButton: true,
+        cancelButtonText: 'Tiếp tục mua sắm'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "giohang.html";
+        } else {
+          document.getElementById("quantityModal").style.display = "none";
+        }
+      });
+    });
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+      document.getElementById("quantityModal").style.display = "none";
+    });
+  }
+});
+
+
 // Hiển thị thông báo lỗi
 function showError(message) {
   document.getElementById("product-detail").innerHTML = `

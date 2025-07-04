@@ -165,15 +165,22 @@
 <!--feedback-->
 <h2>Đánh giá của khách hàng</h2>
 <div class="feedback-wrapper">
-  <form id="feedbackForm">
-    <input type="text" name="name" placeholder="Tên của bạn" required />
-    <textarea name="content" placeholder="Hãy gửi ý kiến phản hồi của bạn..." required></textarea>
-    <button type="submit">Gửi đánh giá</button>
-    <div id="feedbackMessage"></div>
-    <div id="feedbackList"></div>
-  </form>
+ <form id="feedbackForm">
+  <div id="userDisplay">👤 <strong>Chưa đăng nhập</strong></div>
+  <input type="hidden" name="name" id="usernameInput" />
+  <textarea name="content" placeholder="Gửi cảm nhận của bạn..."></textarea>
+  <button type="submit">Gửi</button>
+  <div id="feedbackMessage"></div>
+  <div id="feedbackList"></div>
+
+</form>
 </div>
 </div>
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="spinner"></div>
+</div>
+
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-col">

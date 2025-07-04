@@ -302,27 +302,28 @@ border-radius: 5px;
 
 
 .product-card {
-  background: rgb(235, 216, 185);
+ display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #d6ccb6;
   border-radius: 10px;
-  padding: 20px;
-  margin: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  display: inline-block;
+  padding: 15px;
   width: 200px;
-  vertical-align: top;
-  border: 1px solid #ccc;
-  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
 }
 .product-card button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #4CAF50; 
+  margin-top: auto;
+  background-color: #28a745;
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 10px 12px;
   font-weight: bold;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  transition: background 0.3s;
 }
 
 .product-card button:hover {
@@ -361,7 +362,7 @@ border-radius: 5px;
   left: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 35px;
   transition: transform 0.5s ease, opacity 0.5s;
 }
 
@@ -395,7 +396,7 @@ border-radius: 5px;
   text-align: center;
 }
 .pagination {
-  margin-top: 40px;
+  margin-top: 100px;
   display: flex;
   justify-content: center; 
   align-items: center;      
@@ -1365,8 +1366,80 @@ button[onclick="register()"]:hover {
   }
 }
 
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
+.hidden {
+  display: none;
+}
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #ccc;
+  border-top: 5px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.typing .bubble {
+  font-style: italic;
+  color: #666;
+}
 
+.dot1 {
+  animation: blink 1s infinite;
+  opacity: 0.3;
+  margin-left: 2px;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.click-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #83c57a, #227935);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  animation: explode 0.5s ease-out forwards;
+  z-index: 999;
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
 
 
 

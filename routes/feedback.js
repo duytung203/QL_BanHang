@@ -5,18 +5,20 @@ const db = require('../db');
 // Thêm feedback
 router.post('/add', (req, res) => {
   const { name, content } = req.body;
-  if (!name || !content) {
-    return res.status(400).json({ message: 'Vui lòng nhập đầy đủ thông tin.' });
-  }
-  const sql = 'INSERT INTO feedbacks (name, content) VALUES (?, ?)';
-  db.query(sql, [name, content], (err, result) => {
-    if (err) {
-      console.error('Lỗi khi thêm feedback:', err);
-      return res.status(500).json({ message: 'Lỗi máy chủ.' });
+  const displayName = name && name.trim() ? name : 'Khách giấu tên';
+
+  db.query(
+    'INSERT INTO feedbacks (name, content, created_at) VALUES (?, ?, NOW())',
+    [displayName, content],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ message: 'Lỗi lưu phản hồi' });
+      }
+      res.json({ message: 'Phản hồi đã được lưu!' });
     }
-    res.status(201).json({ message: 'Đánh giá đã được gửi thành công!' });
-  });
+  );
 });
+
 
 
 
